@@ -1,2 +1,1 @@
-# skyylex.github.io
-Skyylex Blog
+**skyylex.github.io** - my blog built using Jekyll
