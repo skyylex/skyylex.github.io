@@ -1,4 +1,4 @@
-## Swift ideas before Swift
+## Swift ideas before Swift. Protocol default implementation.
 
 ### Introduction
 
@@ -17,4 +17,4 @@ because Swift also as Objective-C doesn't support multiple inheritance explicitl
 Most of the questions related to multiple inheritance are answered in the way the real need of this tool don't occure quite often.
 And in such cases you could use composition and win in a flexibility and simplicity of the result solution.
 
-However the idea that leads me to write this post is that Swift ideas aren't new (mostly). And many of the things appeared in Swift, were available in the Objective-C frameworks made by enthusiasts. Smart people know what they need. And default protocol implementation also isn't an exception of this rule.
+However the idea that leads me to write this post is that Swift features aren't new (mostly). And many of the things appeared in Swift, were available in the Objective-C frameworks made by enthusiasts. Smart people know what they need. And default protocol implementation also isn't an exception of this rule.
