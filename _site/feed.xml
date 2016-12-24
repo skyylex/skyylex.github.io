@@ -1,5 +1,119 @@
-<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="http://localhost:4000/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2016-12-24T23:30:59+03:00</updated><id>http://localhost:4000//</id><title type="html">Software Engineering blog</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
-</subtitle><entry><title type="html">Luminous_at_early_stages</title><link href="http://localhost:4000/2016/05/21/luminous_at_early_stages.html" rel="alternate" type="text/html" title="Luminous_at_early_stages" /><published>2016-05-21T00:00:00+03:00</published><updated>2016-05-21T00:00:00+03:00</updated><id>http://localhost:4000/2016/05/21/luminous_at_early_stages</id><content type="html" xml:base="http://localhost:4000/2016/05/21/luminous_at_early_stages.html">&lt;h2 id=&quot;luminous-project&quot;&gt;Luminous project&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="http://localhost:4000/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2016-12-25T02:09:50+03:00</updated><id>http://localhost:4000//</id><title type="html">Software Engineering blog</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+</subtitle><entry><title type="html">Swift_and_multiple_inheritance</title><link href="http://localhost:4000/2016/11/15/Swift_and_Multiple_inheritance.html" rel="alternate" type="text/html" title="Swift_and_multiple_inheritance" /><published>2016-11-15T00:00:00+03:00</published><updated>2016-11-15T00:00:00+03:00</updated><id>http://localhost:4000/2016/11/15/Swift_and_Multiple_inheritance</id><content type="html" xml:base="http://localhost:4000/2016/11/15/Swift_and_Multiple_inheritance.html">&lt;!-- tags: swift, objc, multiple_inheritance --&gt;
+
+&lt;p&gt;&lt;strong&gt;Swift and Multiple Inheritance.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Introduction&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;I like to find out new edges in the well-known concepts. I think no need to prove that basic OOP concepts, such as incapsulation, inheritance and polymorphism are well-known. They were discussed a millions of times and I should not spend time on repeating this. However, I will put some references at the end to be precise enought for someone who needs some more info about the subject. And the subject today will be Multiple Inheritance in Swift, as the title says. Why? Because I thought that Objective-C have no support of a multiple inheritance. And Swift was extended with the default implementation for protocols which is a type of a multiple inheritance. So it’s interesting to play with the old issues in the new environment.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Notice&lt;/strong&gt;: before moving directly to the Swift details I want to make clear that inheritance could be classified according to the inherited subject: 1) inherited implementation 2) inherited interface. Now it’s clear that Objective-C has also multiple inheritance in terms of conforming to @protocol. However it has no issues (described further) because @protocol is just a declaration of available methods for usage.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;How multiple inheritance is presented in Swift&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Swift has such feature as a protocols. Mostly it has the same meaning as in Objective-C. The difference was made in Swift 3 when protocol was allowed to extend with the default implementation. And class(struct) which conforms to protocol will inherit this implementation. The idea is simple to share same functionality without creating separate implementation for each of the methods in each inherited class or struct. And from the first look it might look great. Unfortunately, there is a classic problem where two or more protocols (or protocol and class/strus) has exactly the same method signature. In that case there is no way for linker to choose what implementation to use in the inherited class.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Swift, we have a problem&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The code below represents a problem. There are two protocols A and B with extensions that contains default implementations. These protocols were declared as conformed by class ConflictTarget. The Xcode output clearly displays that such configuration will not work.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;protocol A {
+    func sameFunctionName()
+}
+
+extension A {
+    func sameFunctionName() {
+        print(&quot;method from class A&quot;)
+    }
+}
+
+protocol B {
+    func sameFunctionName()
+}
+
+extension B {
+    func sameFunctionName() {
+        print(&quot;method from class B&quot;)
+    }
+}
+
+class ConflictTarget: A, B {
+    
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Xcode console output&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Playground execution failed: error: NamesConflict.playground:20:7: error: type 'ConflictTarget' does not conform to protocol 'A'
+class ConflictTarget: A, B {
+      ^
+
+NamesConflict.playground:1:10: note: multiple matching functions named 'sameFunctionName()' with type '() -&amp;gt; ()'
+    func sameFunctionName()
+         ^
+
+NamesConflict.playground:15:10: note: candidate exactly matches
+    func sameFunctionName() {
+         ^
+
+NamesConflict.playground:5:10: note: candidate exactly matches
+    func sameFunctionName() {
+         ^
+
+error: NamesConflict.playground:20:7: error: type 'ConflictTarget' does not conform to protocol 'B'
+class ConflictTarget: A, B {
+      ^
+
+NamesConflict.playground:11:10: note: multiple matching functions named 'sameFunctionName()' with type '() -&amp;gt; ()'
+    func sameFunctionName()
+         ^
+
+NamesConflict.playground:15:10: note: candidate exactly matches
+    func sameFunctionName() {
+         ^
+
+NamesConflict.playground:5:10: note: candidate exactly matches
+    func sameFunctionName() {
+         ^
+
+
+* thread #1: tid = 0x5f41a5, 0x000000010bf513c0 NamesConflict`executePlayground, queue = 'com.apple.main-thread', stop reason = breakpoint 1.2
+  * frame #0: 0x000000010bf513c0 NamesConflict`executePlayground
+    frame #1: 0x000000010bf509c0 NamesConflict`__37-[XCPAppDelegate enqueueRunLoopBlock]_block_invoke + 32
+    frame #2: 0x000000010ca6b25c CoreFoundation`__CFRUNLOOP_IS_CALLING_OUT_TO_A_BLOCK__ + 12
+    frame #3: 0x000000010ca50304 CoreFoundation`__CFRunLoopDoBlocks + 356
+    frame #4: 0x000000010ca4fa75 CoreFoundation`__CFRunLoopRun + 901
+    frame #5: 0x000000010ca4f494 CoreFoundation`CFRunLoopRunSpecific + 420
+    frame #6: 0x0000000111e5da6f GraphicsServices`GSEventRunModal + 161
+    frame #7: 0x000000010d5fa964 UIKit`UIApplicationMain + 159
+    frame #8: 0x000000010bf506e9 NamesConflict`main + 201
+    frame #9: 0x000000010ffad68d libdyld.dylib`start + 1
+    frame #10: 0x000000010ffad68d libdyld.dylib`start + 1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Conclusion&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;“Favor object composition over class inheritance”. I agree that the case described above is rare, and if the user has control over the code related to protocols declaration and implementation it could be easily fixed. However, if all you have is binary framework there is no much to choose.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;The second issue I see is related to the functionality for protocols to inherit from the other protocols. When you use them only as API declaration it’s ok. In such case you just save time to not declare same methods twice. But if the extension with the default implementation might appear somewhere, it brings an additional mess in understanding of the system behaviour during code analysis and debugging.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Thank you for reading!&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;References&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Multiple_inheritance&quot;&gt;Multiple inheritance - Wikipedia&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Composition_over_inheritance&quot;&gt;Composition over inheritance - Wikipedia&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://developer.apple.com/videos/play/wwdc2015/408/&quot;&gt;Protocol-oriented programming - WWDC 2015&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><summary type="html"></summary></entry><entry><title type="html">Luminous_at_early_stages</title><link href="http://localhost:4000/2016/05/21/luminous_at_early_stages.html" rel="alternate" type="text/html" title="Luminous_at_early_stages" /><published>2016-05-21T00:00:00+03:00</published><updated>2016-05-21T00:00:00+03:00</updated><id>http://localhost:4000/2016/05/21/luminous_at_early_stages</id><content type="html" xml:base="http://localhost:4000/2016/05/21/luminous_at_early_stages.html">&lt;h2 id=&quot;luminous-project&quot;&gt;Luminous project&lt;/h2&gt;
 
 &lt;h3 id=&quot;introduction&quot;&gt;Introduction&lt;/h3&gt;
 
