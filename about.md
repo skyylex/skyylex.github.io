@@ -20,6 +20,7 @@ Bachelor degree at [Belarusian State University Of Informatics and Radioelectron
 <br>Gradution year: 2014.
 
 **Programming experience**
+
 - Software engineer at Quadrate64.
 - Software engineer at Exadel.
 - Software engineer at HiQo Solutions.
