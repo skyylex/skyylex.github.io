@@ -18,28 +18,42 @@
 
   <body>
 
-    <header style="background-color : rgb(238,238,238);" class="site-header" role="banner">
+    <style>
+.common_header {
+  background-color : rgb(238,238,238);
+  font-family: monospace; 
+  font-size: 13.3333px;
+}
+
+.nav_anchor {
+  text-decoration: underline; 
+  white-space: pre; 
+  vertical-align: text-bottom;
+}
+
+</style>
+<header class="common_header site-header" role="banner">
   <div class="wrapper">
-    <span style="font-family: monospace; font-size: 13.3333px; float: left;">
+    <span style="float: left;">
       <div style="font-weight: bold;">Software Engineering blog</div>
       <div>&nbsp</div>
       <div>author: Yury Lapitsky</div>
-      <div>yury.lapitsky@gmail.com</div>
+      <div>e-mail: yury.lapitsky@gmail.com</div>
     </span>
 
     <span style="float: right;">
       <div>
-        <span style="font-family: monospace; font-size: 13.3333px;">
-          [<a style="text-decoration: underline; white-space: pre; vertical-align: text-bottom;" href="/">home</a>]
+        <span>
+          [<a class="nav_anchor" href="/">home</a>]
         </span>
-        <span style="font-family: monospace; font-size: 13.3333px;">
-          [<a style="text-decoration: underline; white-space: pre; vertical-align: text-bottom;" href="/posts">posts</a>]
+        <span>
+          [<a class="nav_anchor" href="/posts">posts</a>]
         </span>
-        <span style="font-family: monospace; font-size: 13.3333px;">
-          [<a style="text-decoration: underline; white-space: pre; vertical-align: text-bottom;" href="/projects">projects</a>]
+        <span>
+          [<a class="nav_anchor" href="/projects">projects</a>]
         </span>
-        <span style="font-family: monospace; font-size: 13.3333px;">
-          [<a style="text-decoration: underline; white-space: pre; vertical-align: text-bottom;" href="/about">about</a>]
+        <span>
+          [<a class="nav_anchor" href="/about">about</a>]
         </span>
       </div>
       <br>
@@ -49,8 +63,15 @@
 
 </header>
 
+    <style>
+      .context_text { 
+        text-align: justify; 
+        font-family: monospace; 
+        font-size: 13.3333px; 
+      }
+    </style>
     <main class="page-content" aria-label="Content">
-      <div class="wrapper" style="text-align: justify; font-family: monospace; font-size: 13.3333px;">
+      <div class="wrapper context_text" >
         <div width="100%">
   <div class="wrapper" style="text-align: justify; font-family: monospace; font-size: 13.3333px;">
       <div style="font-weight: bold;"> Welcome to my blog! </div>

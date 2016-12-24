@@ -7,8 +7,15 @@
 
     {% include header.html %}
 
+    <style>
+      .context_text { 
+        text-align: justify; 
+        font-family: monospace; 
+        font-size: 13.3333px; 
+      }
+    </style>
     <main class="page-content" aria-label="Content">
-      <div class="wrapper" style="text-align: justify; font-family: monospace; font-size: 13.3333px;">
+      <div class="wrapper context_text" >
         {{ content }}
       </div>
     </main>

@@ -2,12 +2,18 @@
 layout: default
 ---
 <article class="post">
-
+	<style>
+	  .context_text { 
+	    text-align: justify; 
+	    font-family: monospace; 
+	    font-size: 13.3333px; 
+	  }
+	</style>
   <header class="post-header">
-    <h1 style="text-align: justify; font-family: monospace; font-size: 13.3333px; ">{{ page.title | escape }}</h1>
+    <h1 class="context_text">{{ page.title | escape }}</h1>
   </header>
 
-  <div style="text-align: justify; font-family: monospace; font-size: 13.3333px;">
+  <div class="context_text">
     {{ content }}
   </div>
 
