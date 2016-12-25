@@ -13,7 +13,7 @@ layout: default
 [[Related post](2016/05/21/luminous_at_early_stages.html)]
 [[Source code](https://github.com/skyylex/Luminous-proof-of-concept)]
 
-**Description**: Proof of concept was written in a Python with the main idea to create a tool for visualizing algorithms in an automatic way. The user has an implementation of some algorithm in Python and input data to run it, this information is transmitted to the utility that build a visual interpretation of performing this specific algorithm with this specific input. Why it's needed? I believe that idea of the algorithm's usually easier to explain when you have something to show your audience.
+**Description**: Proof of concept was written in a Python with the main idea to create a tool for visualizing algorithms in an automatic way. The user has an implementation of some algorithm in Python and input data to run it, this information is transmitted to the utility that build a visual interpretation of performing this specific algorithm with this specific input. Why it's needed? I believe that idea of the algorithm's usually easier to explain when you have something to show	 your audience.
 
 **Current state**: proof of concept was started on a very broad inputs and unspecified requirements. It became obvious that it cannot cover all needs. There is a necessity to limit what tool allows to do. And without such specification, there is no sense to move further. The project was put on hold to analyze and define a scope to work on.
 
