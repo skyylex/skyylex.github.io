@@ -16,11 +16,11 @@
 title: Software Engineering blog
 email: yury.lapitsky@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+  Software engineering blog by Yury Lapisky (aka skyylex) for everyone interested in programming, 
+  software design, computer architectures and a little bit in computer networks.
+  And off course Swift and Objective-C are first-class citizens here.
+baseurl: "/" # the subpath of your site, e.g. /blog
+url: "skyylex.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: skyylex
 github_username:  skyylex
 
