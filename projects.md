@@ -8,6 +8,15 @@ layout: default
 ---------------------------------------------------------------------------------------------------
 
 <br>
+### **tech_articles.collect**
+<br>
+[[Source](https://github.com/skyylex/tech_articles.collect)]
+
+**Description**: The repo is a plain list of articles which I consider valuable and useful for software engineer for reading.
+
+**Current state**: the list of articles is updated constantly.
+
+<br>
 ### **Luminous**
 <br>
 [[Related post](2016/05/21/luminous_at_early_stages.html)]
