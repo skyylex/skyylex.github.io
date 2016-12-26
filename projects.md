@@ -8,17 +8,21 @@ layout: default
 ---------------------------------------------------------------------------------------------------
 
 <br>
-### **tech_articles.collect**
+**tech_articles.collect**
 <br>
+
 [[Source](https://github.com/skyylex/tech_articles.collect)]
 
 **Description**: The repo is a plain list of articles which I consider valuable and useful for software engineer for reading.
 
-**Current state**: the list of articles is updated constantly.
+**Current state**: the list of articles is updated when something change my programming mind.
+
+---------------------------------------------------------------------------------------------------
 
 <br>
-### **Luminous**
+**Luminous**
 <br>
+
 [[Related post](2016/05/21/luminous_at_early_stages.html)]
 [[Source code](https://github.com/skyylex/Luminous-proof-of-concept)]
 
@@ -29,8 +33,9 @@ layout: default
 ---------------------------------------------------------------------------------------------------
 
 <br>
-### **ReactiveBeaver**
+**ReactiveBeaver**
 <br>
+
 [[Source code](https://github.com/skyylex/ReactiveBeaver)]
 
 **Description**: ePub parser written Objective-C using reactive-functional paradigm using ReactiveCocoa 2. Some time ago I was attracted by opportunities of RFP approach, precisely speaking RFP's relationship to functional approach and pure functions. I decided to give a try with some task suitable for functional (reactive-functional) approach and parsing was a good choice, because of data flows here are the main part of the logic. And using RFP approach is natural here.
@@ -40,8 +45,9 @@ layout: default
 ---------------------------------------------------------------------------------------------------
 
 <br>
-### **SKEPReader**
+**SKEPReader**
 <br>
+
 [[Source code](https://github.com/skyylex/SKEPReader)]
 
 **Description**: this project is about return to life an old ePub reader for iOS named AePubReader. Original source could be described as a demo project. It seemed like the author had no intent to use it in a production, instead he wanted to show the idea of creating ePub reader in iOS. So there were some issues with a code quality and design. Also it was rather old and was written in MRC.
