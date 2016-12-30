@@ -8,4 +8,4 @@ https://www.mikeash.com/pyblog/friday-qa-2010-01-15-stack-and-heap-objects-in-ob
 
 If to start from point that stack handles all about "local variables, as well as internal temporary values and housekeeping" and heap "malloc and free". I assume that those type could be system memory (provided by kernel) and global memory - for keeping static variables **(to prove that)**.
 
-2. 
+2. Why heap is used for memory allocating?
