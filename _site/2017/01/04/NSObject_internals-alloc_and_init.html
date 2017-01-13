@@ -6,12 +6,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Software Engineering blog</title>
-  <meta name="description" content="Software engineering blog by Yury Lapisky (aka skyylex) for everyone interested in programming, software design, computer architectures and a little bit in c...">
+  <title>Nsobject_internals Alloc_and_init</title>
+  <meta name="description" content="NSObject Internals - Episode 1. Alloc &amp;amp; Init.">
 
   <link rel="stylesheet" href="/assets/main.css">
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Lato">
-  <link rel="canonical" href="http://localhost:4000/about.html">
+  <link rel="canonical" href="http://localhost:4000/2017/01/04/NSObject_internals-alloc_and_init.html">
   <link rel="alternate" type="application/rss+xml" title="Software Engineering blog" href="/feed.xml">
   
   
@@ -72,46 +72,15 @@
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <p><strong>Bio</strong></p>
+        <p><strong>NSObject Internals - Episode 1. Alloc &amp; Init.</strong></p>
 
-<p>My name is Yury Lapitsky. I was born in 1991 in Gomel, Republic of Belarus.</p>
+<p>Introduction</p>
 
-<p><strong>Education.</strong></p>
+<p>Today I want to start a series of posts related to investigation of the available NSObject’s source code. NSObject is one of the root classes in Objective-C and most of the core concepts of Objective-C are located there. The format of investigation will evolve, at this moment I think that the most useful description should be a combination of the info from source code and official documentation.</p>
 
-<p>Bachelor degree at <a href="https://www.bsuir.by/">Belarusian State University Of Informatics and Radioelectronics, Minsk</a>
-<br />Speciality: Systems engineer. 
-<br />Speciality: Calculations machines, systems and networks. 
-<br />Gradution year: 2014.</p>
+<p>Memory in C</p>
 
-<p><strong>Programming experience</strong></p>
-
-<ul>
-  <li>Software engineer, iOS at Quadrate64. [January 2013 - September 2013]</li>
-  <li>Software engineer, iOS at Exadel. [September 2013 - December 2014]</li>
-  <li>Software engineer, iOS at HiQo Solutions. [December 2014 - present]</li>
-</ul>
-
-<p><strong>Additional projects</strong></p>
-
-<ul>
-  <li>ReadUS - non-released e-book reader and remote e-book library. [2014-2015]</li>
-  <li>G.O.A.T. - traveler assistant application. [beginning of 2016 - present]</li>
-  <li>All other projects are related to my open-source activity and were (or will be) posted in the [<a href="/projects">projects</a>]</li>
-</ul>
-
-<p><strong>Other activity</strong></p>
-
-<ul>
-  <li><a href="http://stackoverflow.com/users/1417714/skyylex">Stackoverflow</a></li>
-</ul>
-
-<p><strong>Hobbies</strong></p>
-
-<ul>
-  <li>Music.</li>
-  <li>Computer Science.</li>
-  <li>Classic sci-fi literature.</li>
-</ul>
+<p>Objective-C memory management is built over the C foundation. To start speaking we assume that we are speaking about user mode (kernel mode is a different story) C programmer has access to a stack and heap memory. Heap memory is a memory allocated using malloc/calloc functions.</p>
 
       </div>
     </main>

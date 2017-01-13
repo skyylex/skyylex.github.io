@@ -5,7 +5,9 @@
 
   <body>
 
-    {% include header.html %}
+    <div>{% include header.html %}</div>
+    <br>
+    <div class="wrapper context_text"> Created at {{ page.date | date: '%b %d, %Y' }}</div>
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper context_text" >
