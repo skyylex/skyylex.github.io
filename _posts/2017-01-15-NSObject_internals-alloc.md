@@ -101,7 +101,7 @@ However I didn't mentioned anywhere above anything about setting retain counter 
 
 - **Branch prediction.** There are a lot of places, where `fastpath()` and `slowpath()` macros are used. Macro declaration of fastpath: `#define fastpath(x) (__builtin_expect(bool(x), 1));` `__builtin_expect` could be used in `if-else` statements, to tell compiler (optimizer) improve order of instructions by providing expected value of the variable. More information could be found in the official [LLVM docs](http://llvm.org/docs/BranchWeightMetadata.html)`.
 
-- **Disable warnings for unused function arguments**. `id _objc_rootAllocWithZone(Class cls, malloc_zone_t *zone)` doesn't use `zone` argument in the __OBJC2__ build, so to avoid warning (which in this case is useless) additional code line was added.
+- **Disable warnings for unused function arguments**. `id _objc_rootAllocWithZone(Class cls, malloc_zone_t *zone)` doesn't use `zone` argument in the __OBJC2__ build, so to avoid warning additional code line was added.
 	
 	    // allocWithZone under __OBJC2__ ignores the zone parameter
         (void)zone;
