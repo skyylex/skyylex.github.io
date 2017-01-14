@@ -39,10 +39,8 @@ There are multiple branches of execution exist in the source code according to t
 - `id callAlloc(Class cls, bool checkNil, bool allocWithZone=false)` ->
 - `+ (id)allocWithZone:(struct _NSZone *)zone` -> 
 - `id _objc_rootAllocWithZone(Class cls, malloc_zone_t *zone)` ->
-- `id _objc_rootAllocWithZone(Class cls, malloc_zone_t *zone)` ->
 - `id class_createInstance(Class cls, size_t extraBytes)` ->
 - `static id _class_createInstance(Class cls, size_t extraBytes)` ->
-- `id _class_createInstanceFromZone(Class cls, size_t extraBytes, void *zone)` ->
 - `id _class_createInstanceFromZone(Class cls, size_t extraBytes, void *zone)` ->
 - `id objc_constructInstance(Class cls, void *bytes)`
 
