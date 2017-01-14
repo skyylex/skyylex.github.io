@@ -71,7 +71,8 @@ Basically, last two C functions cover the most part of the job, so I will provid
 	    return objc_constructInstance(cls, bytes);
     }
 
-`_class_createInstanceFromZone` function contains 3 parts: 
+`_class_createInstanceFromZone` function contains 3 parts:
+
 - Size calculation. Basic part is retrieved in `cls->alignedInstanceSize()`. `alignedInstanceSize` doesn't perform any essential calculations, instance size is already calculated in the Class object. The only additional action over size is to align it to pointer boundary.
 - Memory allocation. The default flow is a `calloc` call. One important notice that both flows use calloc versions, that means that memory not only allocated, but also is zeroed.
 - Call of the `objc_constructInstance` is the final stage to work over the prepared memory.
