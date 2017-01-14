@@ -93,11 +93,16 @@ Basically, last two C functions cover the most part of the job, so I will provid
 Main part of `objc_constructInstance` function is `obj->initIsa(cls)` call, where `isa` struct's field is set with `Class` value. The call `cls->hasCxxCtor()` at first looks like something unclear. However, if to look over the rest of the objc project for `cxx` names it becomes clear, that all such functionality is related to Objective-C++ implementation.
 
 **Summary**
-<br>
+
+
 Documentation for allocation process contains detailed description of the `NSObject's` behaviour.
 However I didn't mentioned anywhere above anything about setting retain counter to 1. The reason of such miss is that `retain` doesn't exist in the `alloc` functionality at all. `NSObject` contains `SideTable` struct and related methods responsible for support of reference counting in `NSObject`. Actual implementation of the `retainCount` function has initial value equal 1. So there is no a lot of sense to mess counter with `alloc`. In reality, it doesn't touch the programmer, because from API point there is no visible difference.
 
+
+
 **Implementation tricks and details**
+
+Analysing source code can bring new ideas and techniques, which I'll try to share in this section.
 
 - **Branch prediction.** There are a lot of places, where `fastpath()` and `slowpath()` macros are used. Macro declaration of fastpath: `#define fastpath(x) (__builtin_expect(bool(x), 1));` `__builtin_expect` could be used in `if-else` statements, to tell compiler (optimizer) improve order of instructions by providing expected value of the variable. More information could be found in the official [LLVM docs](http://llvm.org/docs/BranchWeightMetadata.html)`.
 
@@ -106,4 +111,5 @@ However I didn't mentioned anywhere above anything about setting retain counter 
 	    // allocWithZone under __OBJC2__ ignores the zone parameter
         (void)zone;
 
-Thank you for reading!
+
+**Thank you for reading!**
