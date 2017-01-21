@@ -1,5 +1,6 @@
 ---
 layout: default
+title: NSObject Internals. Episode 1 - alloc
 ---
 
 **NSObject Internals. Episode 1 - alloc**

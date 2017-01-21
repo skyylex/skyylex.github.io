@@ -1,5 +1,6 @@
 ---
 layout: default
+title: Swift and Multiple Inheritance
 ---
 
 <!-- tags: swift, objc, multiple_inheritance -->

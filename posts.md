@@ -9,7 +9,11 @@ layout: default
       	<ul>
 			{% for post in site.posts %}
 			<li>
-				<a href="{{ post.url }}">{{ post.title }}</a>
+				<a href="{{ post.url }}">
+					{{ post.date | date: "%m/%d/%Y" }}
+					<b> &ensp; ||| &ensp; {{ post.title | replace: '_', ' ' }} </b>
+				</a>
+
 			</li>
 			{% endfor %}
 		</ul>

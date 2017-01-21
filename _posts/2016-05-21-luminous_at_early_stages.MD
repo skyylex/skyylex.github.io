@@ -1,5 +1,6 @@
 ---
 layout: default
+title: Luminous at the early stages
 ---
 ### **Luminous project**
 <br>
