@@ -15,14 +15,17 @@
 # in the templates via {{ site.myvariable }}.
 title: Software Engineering blog
 email: yury.lapitsky@gmail.com
-description: > # this means to ignore newlines until "baseurl:"
-  Software engineering blog by Yury Lapisky (aka skyylex) for everyone interested in programming, 
-  software design, computer architectures and a little bit in computer networks.
-  And off course Swift and Objective-C are first-class citizens here.
+description: > 
+  Software engineering blog by Yury Lapisky (@skyylex) for everyone interested in programming, 
+  software design and architectures. Swift, Objective-C and iOS, Mac are first-class citizens here.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://skyylex.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+
+permalink: /:title
+
 twitter_username: skyylex
 github_username:  skyylex
+
 
 # Build settings
 markdown: kramdown
