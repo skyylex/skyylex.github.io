@@ -12,6 +12,7 @@ Today I continue `NSObject` investigation and take a look on the `objc-accessors
 **Sources analysis**
 
 Most of the functionality are covered by the following functions:
+
 - `id objc_getProperty(id self, SEL _cmd, ptrdiff_t offset, BOOL atomic)`
 - `static inline void reallySetProperty(id self, SEL _cmd, id newValue, ptrdiff_t offset, bool atomic, bool copy, bool mutableCopy)`
 
