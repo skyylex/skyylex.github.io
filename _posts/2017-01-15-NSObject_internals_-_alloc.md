@@ -112,5 +112,6 @@ Analysing source code can bring new ideas and techniques, which I'll try to shar
 	    // allocWithZone under __OBJC2__ ignores the zone parameter
         (void)zone;
 
-
 **Thank you for reading!**
+
+**[next episode >>>>]({{site.url}}/NSObject_internals_-_accessors)**
