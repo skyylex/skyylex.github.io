@@ -5,7 +5,7 @@ title: Exploring Mach-O binaries. Tools - pagestuff
 
 ### Introduction
 
-Most of the programmers start their way in the software development by learning specific language, trying hard to understand documentation which describes key feaures and specific details, investigating available tools such as standard language libraries, sometimes they even check source code of the language implementation or standard library in order to get full understanding how things work. And I think it's correct way and all of the listed activities are valuable, but there is a problem. Documentation rarely covers all aspects, also as source code isn't always available for all of the critical parts. What to do in this case? I believe that reverse engineering and exploration of the binaries could help completing the picture in such situations. That's why today I start new series of post related to binaries in the macOS (OS X) and iOS.
+Most of the programmers start their way in the software development by learning specific language, trying hard to understand documentation which describes key feaures and specific details, investigating available tools such as standard language libraries, sometimes they even check source code of the language implementation or standard library in order to get full understanding how things work. And I think it's correct way of self-development and all of the listed activities are valuable, but there is a problem. Documentation rarely covers all aspects, also as source code isn't always available for all of the critical parts. What to do in this case? I believe that reverse engineering and exploration of the binaries could help completing the picture in such situations. That's why today I start new serieы of posts related to analysis of binaries in the macOS (OS X) and iOS.
 
 ### Mach-O binaries
 
@@ -26,20 +26,20 @@ There is a whole bunch of tools to work with binaries. I prefer to start with th
 
 ### pagestuff
 
-I've choosed probably the most simple tool for start, it's `pagestuff`, which has only few input parameters. The name of the tool isn't very obvious, so the short description will not be redundant. Because of the fact that I like man-pages for their clarity, let's just check the description from `man pagestuff`:
+I've choosed probably the most simple tool for start, it's `pagestuff`, which has only few input parameters. The name of the tool isn't very obvious, so the short description will not be redundant. Because of the fact that I like man-pages for their clarity, let's check the description from `man pagestuff`:
 
 > `pagestuff`  displays  information  about  the specified logical pages of a file conforming to the Mach-O executable format.  For each specified page of code, symbols (function and static data structure names) are displayed.  If no pages are specified, symbols for all pages in the __TEXT, __text section are displayed.
 
-Ok. `man` states that Mach-O format contains from the logical pages, which could be displayed by `pagestuff`. Let's try and see. It's obvious that for binary analysis we need a binary. Basically, for our goals it will enough a simple console application.
+Ok. `man` states that Mach-O structure could be represented with a logical pages, which could be displayed by `pagestuff`. Well, let's try and see. It's obvious that for binary analysis we need a binary. Basically, for our goals it will enough a simple console application. So I've created a blank OS X console project in Xcode and executed it in order to produce an output.
 
 - Link to the sample project: https://github.com/skyylex/sampler
 - Executable file could be found at: `sampler/exploring_mach-o_binaries-tools_pagestuff/output/`
 
-If the repo is downloaded, we are ready to try (in Terminal):
+If the repo is downloaded, we are ready to try (run in Terminal).
 
-`pagestuff executable_filepath -a`
+`pagestuff executable_filepath -a`, where `executable_filepath` in my case is equal `exploring_mach-o_binaries-tools_pagestuff/output/sampler`.
 
-where `executable_filepath` in my case is equal `exploring_mach-o_binaries-tools_pagestuff/output/sampler`
+The tool produces the following output:
 
 ```
 File Page 0 contains Mach-O headers
