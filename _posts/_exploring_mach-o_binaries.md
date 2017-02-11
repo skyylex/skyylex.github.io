@@ -3,11 +3,11 @@ layout: default
 title: Exploring Mach-O binaries. Tools - pagestuff
 ---
 
-### Introduction
+**Introduction**
 
-Most of the programmers start their way in the software development by learning specific language, trying hard to understand documentation which describes key feaures and specific details, investigating available tools such as standard language libraries, sometimes they even check source code of the language implementation or standard library in order to get full understanding how things work. And I think it's correct way of self-development and all of the listed activities are valuable, but there is a problem. Documentation rarely covers all aspects, also as source code isn't always available for all of the critical parts. What to do in this case? I believe that reverse engineering and exploration of the binaries could help completing the picture in such situations. That's why today I start new serieы of posts related to analysis of binaries in the macOS (OS X) and iOS.
+Most of the programmers start their way in the software development by learning specific language, trying hard to understand documentation which describes key feaures and specific details, investigating available tools such as standard language libraries, sometimes they even check source code of the language implementation or standard library in order to get full understanding how things work. And I think it's correct way of self-development and all of the listed activities are valuable, but there is a problem. Documentation rarely covers all aspects, also as source code isn't always available for all of the critical parts. What to do in this case? I believe that reverse engineering and exploration of the binaries could help completing the picture in such situations. That's why today I start new series of posts related to analysis of binaries in the macOS (OS X) and iOS.
 
-### Mach-O binaries
+**Mach-O binaries**
 
 Mach-O is a file format which is used in the most of the Mach-based operational systems. The history of Mach-kernel started in the Carnegie Mellon University and lately continued in the OS X / iOS as as part of hybrid XNU. There was a whole story about the transition from "classic" Mac OS to Mach-based operation system called OS X (and currently called macOS). I've put the links below to the original CMU project and related Wikipedia pages for curious. However, currently I'm mostly interested in the technical aspect located in the Mach-O structure.
 
@@ -24,13 +24,41 @@ There is a whole bunch of tools to work with binaries. I prefer to start with th
 - /usr/bin/otool
 - /usr/bin/nm
 
-### pagestuff
+**pagestuff**
 
 I've choosed probably the most simple tool for start, it's `pagestuff`, which has only few input parameters. The name of the tool isn't very obvious, so the short description will not be redundant. Because of the fact that I like man-pages for their clarity, let's check the description from `man pagestuff`:
 
 > `pagestuff`  displays  information  about  the specified logical pages of a file conforming to the Mach-O executable format.  For each specified page of code, symbols (function and static data structure names) are displayed.  If no pages are specified, symbols for all pages in the __TEXT, __text section are displayed.
 
 Ok. `man` states that Mach-O structure could be represented with a logical pages, which could be displayed by `pagestuff`. Well, let's try and see. It's obvious that for binary analysis we need a binary. Basically, for our goals it will enough a simple console application. So I've created a blank OS X console project in Xcode and executed it in order to produce an output.
+
+Source code of the sample project:
+
+```objective-c
+#import <Foundation/Foundation.h>
+
+@interface SampleClass : NSObject
+
+@property (nonatomic, copy) NSString *property;
+
+@end
+
+@implementation SampleClass
+
+@end
+
+int main(int argc, const char * argv[]) {
+    @autoreleasepool {
+        // insert code here...
+        NSLog(@"Hello, World!");
+        
+        SampleClass *class = [[SampleClass alloc] init];
+        class.property = @"property223";
+    }
+    return 0;
+}
+
+```
 
 - Link to the sample project: https://github.com/skyylex/sampler
 - Executable file could be found at: `sampler/exploring_mach-o_binaries-tools_pagestuff/output/`
@@ -85,6 +113,48 @@ File Page 3 contains data of code signature
 File Page 4 contains data of code signature
 ```
 
+**Analysis**
+
+We've get a list of "File page N ..." items with specific description for each item. I think it's good idea to check them one by one.
+
+- `Mach-O headers`. Mach-O headers appears always at the beginning at the executable, and provide general information about file. Headers should be specified as:
+
+```c
+struct mach_header {
+  unsigned long  magic;      /* Mach magic number identifier */
+  cpu_type_t     cputype;    /* cpu specifier */
+  cpu_subtype_t  cpusubtype; /* machine specifier */
+  unsigned long  filetype;   /* type of file */
+  unsigned long  ncmds;      /* number of load commands */
+  unsigned long  sizeofcmds; /* size of all load commands */
+  unsigned long  flags;      /* flags */
+};
+```
+
+- `section (__TEXT,__text)` - contains executable machine code. In our case, `__text` will at least `main()` compiled source code and other generated by compiler procedures for `SampleClass`.
+- `section (__TEXT,__stubs)` - section contains stubs with prefix `imp___stubs__`. That stubs are used in the code of `__text` section to compile procedures with external dependencies, such as system NSLog. dyld (dynamic linker) will replace such stubs on runtime with actual place in dynamic library.
+
+- `section (__TEXT,__stub_helper)` - section is also used for the dynamic linker (dyld). It contains compiled code to jump to dyld_stub_binder implementation.
+- `section (__TEXT,__objc_classname)` - contains declared in the code Objective-C class names, as string literals (for example "SampleClass")
+- `section (__TEXT,__objc_methname)` - contains string literals for all generated or written Objective-C methods ("init")
+- `(__TEXT,__objc_methtype)` - contains string literals for all method types (generated property method with type "NSString")
+- `section (__TEXT,__cstring)` - contains string literals explicitly or implicitly declared in the code ("Hello, world!")
+- `section (__TEXT,__unwind_info)`:
+
+>  When the linker creates a final linked image, it will create a  
+   __TEXT,__unwind_info section.  This section is a small and fast way for the 
+   runtime to access unwind info for any given function.  If the compiler emitted
+   compact unwind info for the function, that compact unwind info will be encoded
+   in the __TEXT,__unwind_info section. If the compiler emitted dwarf unwind info,
+   the __TEXT,__unwind_info section will contain the offset of the FDE in the
+   __TEXT,__eh_frame section in the final linked image.
+>
+> -- compact_unwind_encoding.h
+
+> The compact unwind information for the executable's code. Generated for exception handling on OS X.
+>
+> -- Mike Ash
+
 **Original project of the Carnegie Mellon University**
 
 1. http://www.cs.cmu.edu/afs/cs/project/mach/public/www/mach.html - Unfortunately, a lot of the links are broken and some of the documentation is lost.
@@ -93,6 +163,14 @@ File Page 4 contains data of code signature
 
 1. http://www.cilinder.be/docs/next/NeXTStep/3.3/nd/DevTools/14_MachO/MachO.htmld/index.html
 2. https://github.com/aidansteele/osx-abi-macho-file-format-reference
+
+**Other references**
+
+1. https://www.objc.io/issues/6-build-tools/mach-o-executables/
+
+**Apple Open Source**
+
+1. https://opensource.apple.com/source/libunwind/libunwind-35.3/include/mach-o/compact_unwind_encoding.h
 
 **Apple Developer documentation:**
 
