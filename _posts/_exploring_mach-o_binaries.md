@@ -153,7 +153,36 @@ struct mach_header {
   
   Specified addresses (0x0000000100000d30, 0x0000000100000d50, 0x0000000100000d90, 0x0000000100000dd0) are the actual addresses of the procedures for Objective-C methods implementations, which are placed in the `(__TEXT, __text)` section.
   
-- `section (__DATA,__nl_symbol_ptr)`
+- `section (__DATA,__nl_symbol_ptr)` - contains non-lazy `dyld_stub_binder` address for `__stub_helper` section code.
+- `section (__DATA,__la_symbol_ptr)` - contains addresses for dynamically lazy loaded stubs such `_NSLog` (imp___stubs__NSLog)
+- `section (__DATA,__cfstring)` - contains CFString constants
+- `section (__DATA,__objc_classlist)` - `_OBJC_CLASS_$__ClassName (_OBJC_CLASS_$_SampleClass)`
+- `section (__DATA,__objc_imageinfo)` - 
+
+File Page 1 contains contents of section (__DATA,__objc_imageinfo)
+File Page 1 contains contents of section (__DATA,__objc_const)
+File Page 1 contains contents of section (__DATA,__objc_selrefs)
+File Page 1 contains contents of section (__DATA,__objc_classrefs)
+File Page 1 contains contents of section (__DATA,__objc_ivar)
+File Page 1 contains contents of section (__DATA,__objc_data)
+Symbols on file page 1 virtual address 0x100001000 to 0x100001230
+  0x00000001000011d8 _OBJC_IVAR_$_SampleClass._property
+  0x00000001000011e0 _OBJC_METACLASS_$_SampleClass
+  0x0000000100001208 _OBJC_CLASS_$_SampleClass
+File Page 2 contains dyld info for sliding an image
+File Page 2 contains dyld info for binding symbols
+File Page 2 contains dyld info for lazy bound symbols
+File Page 2 contains dyld info for symbols exported by a dylib
+File Page 2 contains data of function starts
+File Page 2 contains symbol table for non-global symbols
+File Page 2 contains symbol table for defined global symbols
+File Page 2 contains symbol table for undefined symbols
+File Page 2 contains indirect symbols table
+File Page 2 contains string table
+File Page 2 contains data of code signature
+File Page 3 contains data of code signature
+File Page 4 contains data of code signature
+
 
 **Original project of the Carnegie Mellon University**
 
@@ -168,7 +197,7 @@ struct mach_header {
 
 1. https://www.objc.io/issues/6-build-tools/mach-o-executables/
 2. https://www.mikeash.com/pyblog/friday-qa-2012-11-30-lets-build-a-mach-o-executable.html
-
+3. http://reverseengineering.stackexchange.com/questions/8163/in-a-mach-o-executable-how-can-i-find-which-function-a-stub-targets
 **Apple Open Source**
 
 1. https://opensource.apple.com/source/libunwind/libunwind-35.3/include/mach-o/compact_unwind_encoding.h
