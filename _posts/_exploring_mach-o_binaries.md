@@ -32,7 +32,58 @@ I've choosed probably the most simple tool for start, it's `pagestuff`, which ha
 
 Ok. `man` states that Mach-O format contains from the logical pages, which could be displayed by `pagestuff`. Let's try and see. It's obvious that for binary analysis we need a binary. Basically, for our goals it will enough a simple console application.
 
-Link to the sample project: #TBD
+- Link to the sample project: https://github.com/skyylex/sampler
+- Executable file could be found at: `sampler/exploring_mach-o_binaries-tools_pagestuff/output/`
+
+If the repo is downloaded, we are ready to try (in Terminal):
+
+`pagestuff executable_filepath -a`
+
+where `executable_filepath` in my case is equal `exploring_mach-o_binaries-tools_pagestuff/output/sampler`
+
+```
+File Page 0 contains Mach-O headers
+File Page 0 contains contents of section (__TEXT,__text)
+File Page 0 contains contents of section (__TEXT,__stubs)
+File Page 0 contains contents of section (__TEXT,__stub_helper)
+File Page 0 contains contents of section (__TEXT,__objc_classname)
+File Page 0 contains contents of section (__TEXT,__objc_methname)
+File Page 0 contains contents of section (__TEXT,__objc_methtype)
+File Page 0 contains contents of section (__TEXT,__cstring)
+File Page 0 contains contents of section (__TEXT,__unwind_info)
+Symbols on file page 0 virtual address 0x100000d30 to 0x100000ff8
+  0x0000000100000d30 -[SampleClass property]
+  0x0000000100000d50 -[SampleClass setProperty:]
+  0x0000000100000d90 -[SampleClass .cxx_destruct]
+  0x0000000100000dd0 _main
+File Page 1 contains contents of section (__DATA,__nl_symbol_ptr)
+File Page 1 contains contents of section (__DATA,__la_symbol_ptr)
+File Page 1 contains contents of section (__DATA,__cfstring)
+File Page 1 contains contents of section (__DATA,__objc_classlist)
+File Page 1 contains contents of section (__DATA,__objc_imageinfo)
+File Page 1 contains contents of section (__DATA,__objc_const)
+File Page 1 contains contents of section (__DATA,__objc_selrefs)
+File Page 1 contains contents of section (__DATA,__objc_classrefs)
+File Page 1 contains contents of section (__DATA,__objc_ivar)
+File Page 1 contains contents of section (__DATA,__objc_data)
+Symbols on file page 1 virtual address 0x100001000 to 0x100001230
+  0x00000001000011d8 _OBJC_IVAR_$_SampleClass._property
+  0x00000001000011e0 _OBJC_METACLASS_$_SampleClass
+  0x0000000100001208 _OBJC_CLASS_$_SampleClass
+File Page 2 contains dyld info for sliding an image
+File Page 2 contains dyld info for binding symbols
+File Page 2 contains dyld info for lazy bound symbols
+File Page 2 contains dyld info for symbols exported by a dylib
+File Page 2 contains data of function starts
+File Page 2 contains symbol table for non-global symbols
+File Page 2 contains symbol table for defined global symbols
+File Page 2 contains symbol table for undefined symbols
+File Page 2 contains indirect symbols table
+File Page 2 contains string table
+File Page 2 contains data of code signature
+File Page 3 contains data of code signature
+File Page 4 contains data of code signature
+```
 
 **Original project of the Carnegie Mellon University**
 
