@@ -3,6 +3,8 @@ layout: default
 title: Exploring Mach-O binaries. Tools - pagestuff
 ---
 
+**Exploring Mach-O binaries. Tools - pagestuff**
+
 **Introduction**
 
 Most of the programmers start their way in the software development by learning specific language, trying hard to understand documentation which describes key feaures and specific details, investigating available tools such as standard language libraries, sometimes they even check source code of the language implementation or standard library in order to get full understanding how things work. And I think it's correct way of self-development and all of the listed activities are valuable, but there is a problem. Documentation rarely covers all aspects, also as source code isn't always available for all of the critical parts. What to do in this case? I believe that reverse engineering and exploration of the binaries could help completing the picture in such situations. That's why today I start new series of posts related to analysis of binaries in the macOS (OS X) and iOS.
