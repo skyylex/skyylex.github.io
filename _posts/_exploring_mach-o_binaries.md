@@ -141,19 +141,19 @@ struct mach_header {
 - `section (__TEXT,__cstring)` - contains string literals explicitly or implicitly declared in the code ("Hello, world!")
 - `section (__TEXT,__unwind_info)`:
 
->  When the linker creates a final linked image, it will create a  
-   __TEXT,__unwind_info section.  This section is a small and fast way for the 
-   runtime to access unwind info for any given function.  If the compiler emitted
-   compact unwind info for the function, that compact unwind info will be encoded
-   in the __TEXT,__unwind_info section. If the compiler emitted dwarf unwind info,
-   the __TEXT,__unwind_info section will contain the offset of the FDE in the
-   __TEXT,__eh_frame section in the final linked image.
->
-> -- compact_unwind_encoding.h
-
 > The compact unwind information for the executable's code. Generated for exception handling on OS X.
 >
 > -- Mike Ash
+
+- `Symbols on file page 0 virtual address 0x100000d30 to 0x100000ff8
+  0x0000000100000d30 -[SampleClass property]
+  0x0000000100000d50 -[SampleClass setProperty:]
+  0x0000000100000d90 -[SampleClass .cxx_destruct]
+  0x0000000100000dd0 _main`
+  
+  Specified addresses (0x0000000100000d30, 0x0000000100000d50, 0x0000000100000d90, 0x0000000100000dd0) are the actual addresses of the procedures for Objective-C methods implementations, which are placed in the `(__TEXT, __text)` section.
+  
+- `section (__DATA,__nl_symbol_ptr)`
 
 **Original project of the Carnegie Mellon University**
 
@@ -167,6 +167,7 @@ struct mach_header {
 **Other references**
 
 1. https://www.objc.io/issues/6-build-tools/mach-o-executables/
+2. https://www.mikeash.com/pyblog/friday-qa-2012-11-30-lets-build-a-mach-o-executable.html
 
 **Apple Open Source**
 
