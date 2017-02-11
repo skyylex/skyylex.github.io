@@ -14,13 +14,25 @@ Mach-O is a file format which is used in the most of the Mach-based operational 
 > **Notice:**
 > At the moment of writing this post I didn't find the Mach-O official reference at the Apple Developer. (The only document was there Mach-O Programming Topics which is helpfull, but can not replace specification completely). It's seems strange, because every file format has tons of details. So my current post is based on the information I found from unofficial sources. I hope that these documents still are relevant and the differences will not be too significant.
 
+Specification isn't very exciting topic itselt, because such documents should provide very detailed information. Usually you will not read it as your favorite Lord of the Rings from start to the end. Most probably you will refer to the specification if you have some question. So I think it would be wise to use them in the similar way. I'll select one of the tool for binary file analysis and will try to clarify what output it produces. 
 
+There is a whole bunch of tools to work with binaries. I prefer to start with the most standard set (it's described in the "Mach-O Programming Topics" documentation):
+
+- /usr/bin/pagestuff
+- /usr/bin/lipo
+- /usr/bin/file
+- /usr/bin/otool
+- /usr/bin/nm
 
 ### pagestuff
 
-> pagestuff - Mach-O file page analysis tool
->
-> -- `man pagestuff
+I've choosed probably the most simple tool for start, it's `pagestuff`, which has only few input parameters. The name of the tool isn't very obvious, so the short description will not be redundant. Because of the fact that I like man-pages for their clarity, let's just check the description from `man pagestuff`:
+
+> `pagestuff`  displays  information  about  the specified logical pages of a file conforming to the Mach-O executable format.  For each specified page of code, symbols (function and static data structure names) are displayed.  If no pages are specified, symbols for all pages in the __TEXT, __text section are displayed.
+
+Ok. `man` states that Mach-O format contains from the logical pages, which could be displayed by `pagestuff`. Let's try and see. It's obvious that for binary analysis we need a binary. Basically, for our goals it will enough a simple console application.
+
+Link to the sample project: #TBD
 
 **Original project of the Carnegie Mellon University**
 
@@ -34,3 +46,4 @@ Mach-O is a file format which is used in the most of the Mach-based operational 
 **Apple Developer documentation:**
 
 1. https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/MachOTopics/0-Introduction/introduction.html#//apple_ref/doc/uid/TP40001827-SW1
+2. https://developer.apple.com/library/content/documentation/Performance/Conceptual/ManagingMemory/Articles/VMPages.html#//apple_ref/doc/uid/20001985-CJBJFIDD
