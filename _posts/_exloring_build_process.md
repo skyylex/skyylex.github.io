@@ -1,0 +1,82 @@
+CompileC /Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybuxaavpvhojeepejyjqmvikta/Build/Intermediates/sampler.build/Debug/sampler.build/Objects-normal/x86_64/main.o sampler/main.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+    cd /Users/yury.lapitsky/xcode-projects/sampler
+    export LANG=en_US.US-ASCII
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang 
+    -x objective-c 
+    -arch x86_64 
+    -fmessage-length=0 
+    -fdiagnostics-show-note-include-stack 
+    -fmacro-backtrace-limit=0 
+    -std=gnu99 
+    -fobjc-arc 
+    -fmodules 
+    -gmodules 
+    -fmodules-cache-path=/Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/ModuleCache 
+    -fmodules-prune-interval=86400 
+    -fmodules-prune-after=345600 
+    -fbuild-session-file=/Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/ModuleCache/Session.modulevalidation 
+    -fmodules-validate-once-per-build-session 
+    -Wnon-modular-include-in-framework-module 
+    -Werror=non-modular-include-in-framework-module 
+    -Wno-trigraphs 
+    -fpascal-strings -O0 
+    -fno-common 
+    -Wno-missing-field-initializers 
+    -Wno-missing-prototypes 
+    -Werror=return-type 
+    -Wdocumentation 
+    -Wunreachable-code 
+    -Wno-implicit-atomic-properties 
+    -Werror=deprecated-objc-isa-usage 
+    -Werror=objc-root-class 
+    -Wno-arc-repeated-use-of-weak 
+    -Wduplicate-method-match 
+    -Wno-missing-braces 
+    -Wparentheses 
+    -Wswitch 
+    -Wunused-function 
+    -Wno-unused-label 
+    -Wno-unused-parameter 
+    -Wunused-variable 
+    -Wunused-value 
+    -Wempty-body 
+    -Wconditional-uninitialized 
+    -Wno-unknown-pragmas 
+    -Wno-shadow 
+    -Wno-four-char-constants 
+    -Wno-conversion 
+    -Wconstant-conversion 
+    -Wint-conversion 
+    -Wbool-conversion 
+    -Wenum-conversion 
+    -Wshorten-64-to-32 
+    -Wpointer-sign 
+    -Wno-newline-eof 
+    -Wno-selector 
+    -Wno-strict-selector-match 
+    -Wundeclared-selector 
+    -Wno-deprecated-implementations 
+    -DDEBUG=1 
+    -DOBJC_OLD_DISPATCH_PROTOTYPES=0 
+    -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk 
+    -fasm-blocks 
+    -fstrict-aliasing 
+    -Wprotocol 
+    -Wdeprecated-declarations 
+    -mmacosx-version-min=10.12 
+    -g 
+    -Wno-sign-conversion 
+    -Winfinite-recursion 
+    -iquote /Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybuxaavpvhojeepejyjqmvikta/Build/Intermediates/sampler.build/Debug/sampler.build/sampler-generated-files.hmap 
+    -I/Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybuxaavpvhojeepejyjqmvikta/Build/Intermediates/sampler.build/Debug/sampler.build/sampler-own-target-headers.hmap 
+    -I/Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybuxaavpvhojeepejyjqmvikta/Build/Intermediates/sampler.build/Debug/sampler.build/sampler-all-target-headers.hmap 
+    -iquote /Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybuxaavpvhojeepejyjqmvikta/Build/Intermediates/sampler.build/Debug/sampler.build/sampler-project-headers.hmap 
+    -I/Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybuxaavpvhojeepejyjqmvikta/Build/Products/Debug/include 
+    -I/Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybuxaavpvhojeepejyjqmvikta/Build/Intermediates/sampler.build/Debug/sampler.build/DerivedSources/x86_64 
+    -I/Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybuxaavpvhojeepejyjqmvikta/Build/Intermediates/sampler.build/Debug/sampler.build/DerivedSources 
+    -F/Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybuxaavpvhojeepejyjqmvikta/Build/Products/Debug -MMD -MT dependencies 
+    -MF /Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybuxaavpvhojeepejyjqmvikta/Build/Intermediates/sampler.build/Debug/sampler.build/Objects-normal/x86_64/main.d 
+	--serialize-diagnostics /Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybuxaavpvhojeepejyjqmvikta/Build/Intermediates/sampler.build/Debug/sampler.build/Objects-normal/x86_64/main.dia 
+
+    -c /Users/yury.lapitsky/xcode-projects/sampler/sampler/main.m 
+	-o /Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybuxaavpvhojeepejyjqmvikta/Build/Intermediates/sampler.build/Debug/sampler.build/Objects-normal/x86_64/main.o
