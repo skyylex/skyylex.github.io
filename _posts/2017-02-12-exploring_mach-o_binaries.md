@@ -180,25 +180,25 @@ It's seems that it. `__TEXT` and `__DATA` sections describe most of the executab
 
 **Original project of the Carnegie Mellon University**
 
-1. http://www.cs.cmu.edu/afs/cs/project/mach/public/www/mach.html - Unfortunately, a lot of the links are broken and some of the documentation is lost.
+1. [Carnegie Mellon University - Mach project](http://www.cs.cmu.edu/afs/cs/project/mach/public/www/mach.html) - Unfortunately, a lot of the links are broken and some of the documentation is lost.
 
 **References to Mach-O specification:**
 
-1. http://www.cilinder.be/docs/next/NeXTStep/3.3/nd/DevTools/14_MachO/MachO.htmld/index.html
-2. https://github.com/aidansteele/osx-abi-macho-file-format-reference
+1. [NextStep 3.3 - Mach-O specification](http://www.cilinder.be/docs/next/NeXTStep/3.3/nd/DevTools/14_MachO/MachO.htmld/index.html)
+2. [Unofficial Mach-O specification](https://github.com/aidansteele/osx-abi-macho-file-format-reference)
 
 **Other references**
 
-1. https://www.objc.io/issues/6-build-tools/mach-o-executables/
-2. https://www.mikeash.com/pyblog/friday-qa-2012-11-30-lets-build-a-mach-o-executable.html
-3. http://reverseengineering.stackexchange.com/questions/8163/in-a-mach-o-executable-how-can-i-find-which-function-a-stub-targets
-4. https://fossies.org/linux/xscreensaver/OSX/enable_gc.c
+1. [objc.io - Mach-O Executables](https://www.objc.io/issues/6-build-tools/mach-o-executables/)
+2. [Mike Ash - Let's build Mach-O executable](https://www.mikeash.com/pyblog/friday-qa-2012-11-30-lets-build-a-mach-o-executable.html)
+3. [StackOverflow question about stubs in Mach-O](http://reverseengineering.stackexchange.com/questions/8163/in-a-mach-o-executable-how-can-i-find-which-function-a-stub-targets)
+4. [image_info at Fossie](https://fossies.org/linux/xscreensaver/OSX/enable_gc.c)
 
 **Apple Open Source**
 
-1. https://opensource.apple.com/source/libunwind/libunwind-35.3/include/mach-o/compact_unwind_encoding.h
+1. [Apple Open Source - unwind info](https://opensource.apple.com/source/libunwind/libunwind-35.3/include/mach-o/compact_unwind_encoding.h)
 
 **Apple Developer documentation:**
 
-1. https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/MachOTopics/0-Introduction/introduction.html#//apple_ref/doc/uid/TP40001827-SW1
-2. https://developer.apple.com/library/content/documentation/Performance/Conceptual/ManagingMemory/Articles/VMPages.html#//apple_ref/doc/uid/20001985-CJBJFIDD
+1. [Mach-O Programming Topics](https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/MachOTopics/0-Introduction/introduction.html#//apple_ref/doc/uid/TP40001827-SW1)
+2. [Managing Memory](https://developer.apple.com/library/content/documentation/Performance/Conceptual/ManagingMemory/Articles/VMPages.html#//apple_ref/doc/uid/20001985-CJBJFIDD)
