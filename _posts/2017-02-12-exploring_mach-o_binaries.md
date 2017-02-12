@@ -36,7 +36,7 @@ Ok. `man` states that Mach-O structure could be represented with a logical pages
 
 Source code of the sample project:
 
-```objective-c
+```c
 #import <Foundation/Foundation.h>
 
 @interface SampleClass : NSObject
@@ -183,6 +183,10 @@ It's seems that it. `__TEXT` and `__DATA` sections describe most of the executab
 **Original project of the Carnegie Mellon University**
 
 1. [Carnegie Mellon University - Mach project](http://www.cs.cmu.edu/afs/cs/project/mach/public/www/mach.html) - Unfortunately, a lot of the links are broken and some of the documentation is lost.
+
+**Wikipedia pages**
+1. [Mach kernel](https://en.wikipedia.org/wiki/Mach_(kernel))
+2. [Classic Mac OS](https://en.wikipedia.org/wiki/Classic_Mac_OS#Transition_to_Mac_OS_X)
 
 **References to Mach-O specification:**
 
