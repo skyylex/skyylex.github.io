@@ -1,3 +1,4 @@
+```
 CompileC /Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybuxaavpvhojeepejyjqmvikta/Build/Intermediates/sampler.build/Debug/sampler.build/Objects-normal/x86_64/main.o sampler/main.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
     cd /Users/yury.lapitsky/xcode-projects/sampler
     export LANG=en_US.US-ASCII
@@ -80,3 +81,4 @@ CompileC /Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybux
 
     -c /Users/yury.lapitsky/xcode-projects/sampler/sampler/main.m 
 	-o /Users/yury.lapitsky/Library/Developer/Xcode/DerivedData/sampler-gsybuxaavpvhojeepejyjqmvikta/Build/Intermediates/sampler.build/Debug/sampler.build/Objects-normal/x86_64/main.o
+```
