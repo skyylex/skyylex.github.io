@@ -36,7 +36,7 @@ Ok. `man` states that Mach-O structure could be represented with a logical pages
 
 Source code of the sample project:
 
-```c
+``` objective-c
 #import <Foundation/Foundation.h>
 
 @interface SampleClass : NSObject
@@ -121,7 +121,7 @@ We've got a list of "File page N ..." items with specific description for each i
 
 - `Mach-O headers`. Mach-O headers appears always at the beginning at the executable, and provide general information about file. Headers should be specified as:
 
-```c
+``` c
 struct mach_header {
   unsigned long  magic;      /* Mach magic number identifier */
   cpu_type_t     cputype;    /* cpu specifier */
