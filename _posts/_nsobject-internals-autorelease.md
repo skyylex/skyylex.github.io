@@ -25,7 +25,7 @@ Mike Ash has great article with explanation of the possible implementation for N
 
 References
 
-[1] Reference counting on Wikipedia - https://en.wikipedia.org/wiki/Reference_counting
-[2] NSAutoreleasePool class reference - https://developer.apple.com/reference/foundation/nsautoreleasepool
-[3] Using Autorelease Pool Blocks - https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html
-[4] Mike Ash, Let's build an NSAutoreleasePool - https://www.mikeash.com/pyblog/friday-qa-2011-09-02-lets-build-nsautoreleasepool.html
+- [1] Reference counting on Wikipedia - https://en.wikipedia.org/wiki/Reference_counting
+- [2] NSAutoreleasePool class reference - https://developer.apple.com/reference/foundation/nsautoreleasepool
+- [3] Using Autorelease Pool Blocks - https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html
+- [4] Mike Ash, Let's build an NSAutoreleasePool - https://www.mikeash.com/pyblog/friday-qa-2011-09-02-lets-build-nsautoreleasepool.html
