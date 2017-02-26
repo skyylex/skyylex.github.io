@@ -1,6 +1,6 @@
 **NSObject Internals - `autorelease` and `@autoreleasePool`**
 
-*I would like to thank my friend Mike Litvinetz, who helped me with the investigation of AutoreleasePool source code*
+*I would like to thank my friend Mike Litvinets, who helped me with the investigation of AutoreleasePool source code*
 
 **Introduction**
 
@@ -23,11 +23,14 @@ One of the possible solutions here is to provide delayed way to `release` object
 Autorelease mechanism is available for developers since iOS 2.0 and macOS 10.0. Initially, it was incapsulated in the NSAutoreleasePool class, which represents a collector for autoreleased objects.
 Mike Ash has great article with explanation of the possible implementation for NSAutoreleasePool. I suggest to take a look at it, it definitely worth your time.
 
-In short, there is a pool of autoreleased objects
+**Source code**
+
+
 
 **References**
 
 - [1] Reference counting on Wikipedia - https://en.wikipedia.org/wiki/Reference_counting
-- [2] NSAutoreleasePool class reference - https://developer.apple.com/reference/foundation/nsautoreleasepool
-- [3] Using Autorelease Pool Blocks - https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html
-- [4] Mike Ash, Let's build an NSAutoreleasePool - https://www.mikeash.com/pyblog/friday-qa-2011-09-02-lets-build-nsautoreleasepool.html
+- [2] - https://clang.llvm.org/docs/AutomaticReferenceCounting.html
+- [3] NSAutoreleasePool class reference - https://developer.apple.com/reference/foundation/nsautoreleasepool
+- [4] Using Autorelease Pool Blocks - https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html
+- [5] Mike Ash, Let's build an NSAutoreleasePool - https://www.mikeash.com/pyblog/friday-qa-2011-09-02-lets-build-nsautoreleasepool.html
