@@ -23,7 +23,9 @@ One of the possible solutions here is to provide delayed way to `release` object
 Autorelease mechanism is available for developers since iOS 2.0 and macOS 10.0. Initially, it was incapsulated in the NSAutoreleasePool class, which represents a collector for autoreleased objects.
 Mike Ash has great article with explanation of the possible implementation for NSAutoreleasePool. I suggest to take a look at it, it definitely worth your time.
 
-References
+In short, there is a pool of autoreleased objects
+
+**References**
 
 - [1] Reference counting on Wikipedia - https://en.wikipedia.org/wiki/Reference_counting
 - [2] NSAutoreleasePool class reference - https://developer.apple.com/reference/foundation/nsautoreleasepool
