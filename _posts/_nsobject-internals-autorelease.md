@@ -81,10 +81,12 @@ POSIX Threads were implemented in numerous amount of Linux and BSD derivatives. 
 >
 > ------ FreeBSD Man Pages
 
-Even at this moment we can assume that autoreleasepool is stored using these pthread functions. However, let's postpone all assumptions and go back when we have more facts to back them up.
+Even at this moment we can assume that autoreleasepool is stored using these pthread functions. However, let's postpone all assumptions and go back when we have more facts to back them up. 
 
-- `static uint8_t const SCRIBBLE = 0xA3;` - usage of this key is not so obvious. And will be described later.
-- Skipping `SIZE` and `COUNT`.
+- `id *next` - pointer to the autoreleased object. When autorelease pool needs to keep track on one more autoreleased object, it shifts `next` pointer value with and store object pointer: `*next++ = obj;`.
+- `pthread_t const thread;` - initialized with `pthread_self()` value, which is POSIX descriptor of the current thread. Used as a guard variable for verification purposes. AutoreleasePoolPage has a lot of verifications inside implementation to crash execution thread in case of any diff between initial stored thread descriptor and actual execution thread.
+- AutoreleasePoolPage * const parent;
+- AutoreleasePoolPage *child;
 
 
 ```
@@ -111,6 +113,8 @@ static inline void tls_set_direct(tls_key_t k, void *value)
 ```
 
 Out of scope:
+
+- `SCRIBBLE`, `SIZE`, `COUNT`, `magic`, `depth` and `hiwat`.
 
 ```
 #if SUPPORT_RETURN_AUTORELEASE
