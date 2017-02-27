@@ -71,7 +71,7 @@ class AutoreleasePoolPage
   - `void *pthread_getspecific(pthread_key_t key);`
   - `int pthread_setspecific(pthread_key_t key, const void *value);`
 
-POSIX Threads were implemented in numerous amount of Linux and BSD derivatives. So we can refer to the man pages to get description of the expected behaviour.
+POSIX Threads were implemented in a numerous amount of Linux and BSD derivatives. So we can refer to the man pages to get description of the expected behaviour.
 
 > The pthread_setspecific() function	associates a thread-specific value
 > with a key	obtained via a previous	call to	pthread_key_create().  Different 
@@ -83,7 +83,8 @@ POSIX Threads were implemented in numerous amount of Linux and BSD derivatives. 
 
 Even at this moment we can assume that autoreleasepool is stored using these pthread functions. However, let's postpone all assumptions and go back when we have more facts to back them up. 
 
-- `id *next` - pointer to the autoreleased object. When autorelease pool needs to keep track on one more autoreleased object, it shifts `next` pointer value with and store object pointer: `*next++ = obj;`.
+- `SIZE` - 
+- `id *next` - pointer to the current autoreleased object. When autorelease pool needs to keep track on one more autoreleased object, it shifts `next` pointer value with and store object pointer: `*next++ = obj;`.
 - `pthread_t const thread;` - initialized with `pthread_self()` value, which is POSIX descriptor of the current thread. Used as a guard variable for verification purposes. AutoreleasePoolPage has a lot of verifications inside implementation to crash execution thread in case of any diff between initial stored thread descriptor and actual execution thread.
 - `AutoreleasePoolPage *const parent;` and `AutoreleasePoolPage *child;` - pointers which provide linked list implementation of the autoreleasePoolPages.
 
@@ -91,6 +92,24 @@ This information was retrieved by investigation of the separate fields usage and
 
 Let's go back to the AutoreleasePoolPage::autorelease and go through the execution branches.
 
+- `static inline id autorelease(id obj)` - is just a wrapper with a few simple verifications calls `autoreleaseFast`
+    - `static inline id autoreleaseFast(id obj)` - these function presents actual logic to us:
+    
+    AutoreleasePoolPage provides a pagination mechanism to fill autorelease pool with objects using page portions. There are two types of pages:
+    
+- `static inline AutoreleasePoolPage *hotPage();` - this page is the most recent AutoreleasePoolPage instance stored right into the thread specific memory.
+- `static inline AutoreleasePoolPage *coldPage();` - is the most "old" page.
+
+Pages are used as a containers for autorelease object pointers. What does it meand. Page has explicit size defined with SIZE field. It rather simple pointer arithmetic to get object memory bounds. Initially pointer has start address of the allocated for class memory, it's lower bound. If we know size (and we know), we can calculate upper bound by simple addition. So we know how much objects can we place. 
+
+
+
+- `lower_bound = (uint8_t *)this`
+- `p1 = lower_bound + sizeof(*this)`
+- `upper_bound = lower_bound + SIZE`
+
+
+[lower_bound]|autoreleasePoolPage_memory_for_fields|-|id *p1|-|id *p2|-|id *p3|-|...|-[upper_bound]
 
 ```
 static inline void *tls_get_direct(tls_key_t k) 
@@ -117,7 +136,7 @@ static inline void tls_set_direct(tls_key_t k, void *value)
 
 Out of scope:
 
-- `SCRIBBLE`, `SIZE`, `COUNT`, `magic`, `depth` and `hiwat`.
+- `SCRIBBLE`, `COUNT`, `magic`, `depth` and `hiwat`.
 
 ```
 #if SUPPORT_RETURN_AUTORELEASE
