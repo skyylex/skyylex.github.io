@@ -81,6 +81,10 @@ POSIX Threads were implemented in numerous amount of Linux and BSD derivatives. 
 >
 > ------ FreeBSD Man Pages
 
+Even at this moment we can assume that autoreleasepool is stored using these pthread functions. However, let's postpone all assumptions and go back when we have more facts to back them up.
+
+- `static uint8_t const SCRIBBLE = 0xA3;` - usage of this key is not so obvious. And will be described later.
+- Skipping `SIZE` and `COUNT`.
 
 
 ```
