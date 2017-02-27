@@ -223,7 +223,7 @@ _objc_fatal("autorelease pool page %p corrupted\n"
 
 **P.S.**
 
-The most basic details were covered here, however, there are some difficultiles with mapping available source with disassembly. ARC runtime support functions are actual citizens there. So it's interesting challenge to collect puzzle from two such different sides. Who knows, may be in some of the future posts?
+The most basic details were covered here, however, there are some difficultiles with mapping of available source code with disassembly. ARC runtime support functions are actual citizens there. So it's interesting challenge to collect puzzle from two such different sides. Who knows, may be in some of the future posts?
 
 **References**
 
