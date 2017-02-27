@@ -106,30 +106,30 @@ Pages are used as a containers for autorelease object pointers. What does it mea
 
 Initially, `next` is empty and points to the first slot for `(id *)autoreleased` object. It's right behing the values of the instance variables section . When object arrives for autoreleasing `next` pointer value is filled with the pointer to the autoreleased object and after that shifted to the next cell using C-based pointers arithmetic.
 
-Ok, the most usual case when there is single pool page ready for filling is explained. But initially there is no pool page, what's in that case? And what about full page issue?
+Ok, the most usual case when there is at least one existing pool page is explained. But if initially there is no pool page, what's in that case? And what about full page issue? The answer is pretty clear new empty AutoreleasePoolPage should be created. In both cases it will stored as a hot page, the difference is that the 2nd case with full page will set pointers for `page->parent` and `page->child` to keep linked list sequence.
 
-```
-static inline void *tls_get_direct(tls_key_t k) 
-{ 
-    assert(is_valid_direct_key(k));
+So the tree will look like:
 
-    if (_pthread_has_direct_tsd()) {
-        return _pthread_getspecific_direct(k);
-    } else {
-        return pthread_getspecific(k);
-    }
-}
-static inline void tls_set_direct(tls_key_t k, void *value) 
-{ 
-    assert(is_valid_direct_key(k));
+- `autorelease(obj)`
+    - `autoreleaseFast(obj)`
+        - `page = hotPage()`
+        - `if (page && !page->full())`
+            - `id *add(id obj)`
+        - `else if (page)`
+            - `autoreleaseFullPage(obj, page);`
+                - `page = new AutoreleasePoolPage(page);`
+                - `setHotPage(page);`
+                - `page->add(obj)`
+        - `else `
+            - `id *autoreleaseNoPage(id obj)`
+                - `page = new AutoreleasePoolPage(nil);`
+                - `setHotPage(page);`
+                - `page->add(obj);`
+    
 
-    if (_pthread_has_direct_tsd()) {
-        _pthread_setspecific_direct(k, value);
-    } else {
-        pthread_setspecific(k, value);
-    }
-}
-```
+
+
+
 
 Out of scope:
 
