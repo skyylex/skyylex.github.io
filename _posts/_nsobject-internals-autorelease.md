@@ -85,8 +85,11 @@ Even at this moment we can assume that autoreleasepool is stored using these pth
 
 - `id *next` - pointer to the autoreleased object. When autorelease pool needs to keep track on one more autoreleased object, it shifts `next` pointer value with and store object pointer: `*next++ = obj;`.
 - `pthread_t const thread;` - initialized with `pthread_self()` value, which is POSIX descriptor of the current thread. Used as a guard variable for verification purposes. AutoreleasePoolPage has a lot of verifications inside implementation to crash execution thread in case of any diff between initial stored thread descriptor and actual execution thread.
-- AutoreleasePoolPage * const parent;
-- AutoreleasePoolPage *child;
+- `AutoreleasePoolPage *const parent;` and `AutoreleasePoolPage *child;` - pointers which provide linked list implementation of the autoreleasePoolPages.
+
+This information was retrieved by investigation of the separate fields usage and analysis of their declaration. However, we have also available methods and execution flow, which could provide us another side of the picture.
+
+Let's go back to the AutoreleasePoolPage::autorelease and go through the execution branches.
 
 
 ```
