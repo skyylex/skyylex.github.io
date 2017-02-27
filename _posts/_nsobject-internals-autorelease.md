@@ -100,16 +100,13 @@ Let's go back to the AutoreleasePoolPage::autorelease and go through the executi
 - `static inline AutoreleasePoolPage *hotPage();` - this page is the most recent AutoreleasePoolPage instance stored right into the thread specific memory.
 - `static inline AutoreleasePoolPage *coldPage();` - is the most "old" page.
 
-Pages are used as a containers for autorelease object pointers. What does it meand. Page has explicit size defined with SIZE field. It rather simple pointer arithmetic to get object memory bounds. Initially pointer has start address of the allocated for class memory, it's lower bound. If we know size (and we know), we can calculate upper bound by simple addition. So we know how much objects can we place. 
+Pages are used as a containers for autorelease object pointers. What does it mean? Page has explicit size defined with SIZE field. It rather simple pointer arithmetic to get object memory bounds. Initially pointer has start address of the allocated for class memory, it's lower bound. If we know size (and we know), we can calculate upper bound by simple addition. So we know how much objects can we place. From the class declaration we know that `next` is responsible for keeping pointers to the autoreleased objects. To simplify explanation I created rough layout of the AutoreleasePoolPage:
 
+![AutoreleasePoolPage Layout]({{ site.url }}/assets/autoreleasepoolpage_layout.png)
 
+Initially, `next` is empty and points to the first slot for `(id *)autoreleased` object. It's right behing the values of the instance variables section . When object arrives for autoreleasing `next` pointer value is filled with the pointer to the autoreleased object and after that shifted to the next cell using C-based pointers arithmetic.
 
-- `lower_bound = (uint8_t *)this`
-- `p1 = lower_bound + sizeof(*this)`
-- `upper_bound = lower_bound + SIZE`
-
-
-[lower_bound]|autoreleasePoolPage_memory_for_fields|-|id *p1|-|id *p2|-|id *p3|-|...|-[upper_bound]
+Ok, the most usual case when there is single pool page ready for filling is explained. But initially there is no pool page, what's in that case? And what about full page issue?
 
 ```
 static inline void *tls_get_direct(tls_key_t k) 
