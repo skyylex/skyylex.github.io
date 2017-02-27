@@ -70,7 +70,9 @@ class AutoreleasePoolPage
   - `int pthread_key_create(pthread_key_t *key, void (*destructor)(void*));`
   - `void *pthread_getspecific(pthread_key_t key);`
   - `int pthread_setspecific(pthread_key_t key, const void *value);`
-  
+
+POSIX Threads were implemented in numerous amount of Linux and BSD derivatives. So we can refer to the man pages to get description of the expected behaviour.
+
 > The pthread_setspecific() function	associates a thread-specific value
 > with a key	obtained via a previous	call to	pthread_key_create().  Different 
 > threads can bind different values to the same key.  These values are
@@ -124,3 +126,4 @@ Out of scope:
 - [3] NSAutoreleasePool class reference - https://developer.apple.com/reference/foundation/nsautoreleasepool
 - [4] Using Autorelease Pool Blocks - https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html
 - [5] Mike Ash, Let's build an NSAutoreleasePool - https://www.mikeash.com/pyblog/friday-qa-2011-09-02-lets-build-nsautoreleasepool.html
+- [6] FreeBSD Man pages - https://www.freebsd.org/cgi/man.cgi?query=pthread_setspecific&sektion=3
