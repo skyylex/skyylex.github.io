@@ -4,7 +4,7 @@
 
 **Introduction**
 
-This is 3rd episode of the NSObject internals and today I will talk about autorelease and autorelease pool implementation in the Objective-C.
+This is 3rd episode of the `NSObject` internals and today I will talk about autorelease and autorelease pool implementation in the Objective-C.
 What is it all about? Objective-C memory management is built upon reference counting (RC) technique. RC uses counter to manage object lifetime.
 Counter could be increased and decreased by some specified operations. In Objective-C it's done by sending `retain` and `release` messages to object correspondingly. 
 Basically, it should be enough to create programs, there is an explicit way to control lifetime and free memory. 
@@ -16,8 +16,8 @@ One of the possible solutions here is to provide delayed way to `release` object
 
 **NSAutoreleasePool**
 
-Autorelease mechanism is available for developers since iOS 2.0 and macOS 10.0. Initially, it was incapsulated in the NSAutoreleasePool class, which represents a collector for autoreleased objects.
-Mike Ash has great article with explanation of the possible implementation for NSAutoreleasePool. I suggest to take a look at it, it definitely worth your time.
+Autorelease mechanism is available for developers since iOS 2.0 and macOS 10.0. Initially, it was incapsulated in the `NSAutoreleasePool` class, which represents a collector for autoreleased objects.
+Mike Ash has great article with explanation of the possible implementation for `NSAutoreleasePool`. I suggest to take a look at it, it definitely worth your time.
 
 **Source code**
 
@@ -25,7 +25,7 @@ Notice #1: this part is written based on the Objective-c source code: https://op
 
 Notice #2: Objective-C source code contains a lot of details related to edge cases and optimizations. And in terms of time it's inefficient trying to cover all these specifics, that's why I will be focused on the most basic parts.
 
-Let's start with the most known part. It's definitely `autorelease` method of NSObject. If we skip edge cases such as fast autorelease and tagged pointers and other optimizations, then we will find autorelease core in the `AutoreleasePoolPage::autorelease` call:
+Let's start with the most known part. It's definitely `autorelease` method of `NSObject`. If we skip edge cases such as fast autorelease and tagged pointers and other optimizations, then we will find autorelease core in the `AutoreleasePoolPage::autorelease` call:
 
 ```objective-c
 __attribute__((noinline,used)) static id _objc_rootAutorelease2(id obj) {
@@ -34,7 +34,7 @@ __attribute__((noinline,used)) static id _objc_rootAutorelease2(id obj) {
 }
 ```
 
-From the first look AutoreleasePoolPage class is very similar to the functionality that we were searching for. Let's check what fields this C++ class contains:
+From the first look `AutoreleasePoolPage` class is very similar to the functionality that we were searching for. Let's check what fields this C++ class contains:
 
 ```objective-c
 class AutoreleasePoolPage 
@@ -81,28 +81,28 @@ Even at this moment we can assume that autoreleasepool is stored using these pth
 
 - `static size_t const SIZE = PAGE_MAX_SIZE;` - actual size of the allocated pool page.
 - `id *next` - pointer to the current autoreleased object. When autorelease pool needs to keep track on one more autoreleased object, it shifts `next` pointer value with and store object pointer: `*next++ = obj;`.
-- `pthread_t const thread;` - initialized with `pthread_self()` value, which is POSIX descriptor of the current thread. Used as a guard variable for verification purposes. AutoreleasePoolPage has a lot of verifications inside implementation to crash execution thread in case of any diff between initial stored thread descriptor and actual execution thread.
+- `pthread_t const thread;` - initialized with `pthread_self()` value, which is POSIX descriptor of the current thread. Used as a guard variable for verification purposes. `AutoreleasePoolPage` has a lot of verifications inside implementation to crash execution thread in case of any diff between initial stored thread descriptor and actual execution thread.
 - `AutoreleasePoolPage *const parent;` and `AutoreleasePoolPage *child;` - pointers which provide linked list implementation of the autoreleasePoolPages.
 
 This information was retrieved by investigation of the separate fields usage and analysis of their declaration. However, we have also available methods and execution flow, which could provide us another side of the picture.
 
-Let's go back to the AutoreleasePoolPage::autorelease and go through the execution branches.
+Let's go back to the `AutoreleasePoolPage::autorelease` and go through the execution branches.
 
 - `static inline id autorelease(id obj)` - is just a wrapper with a few simple verifications calls `autoreleaseFast`
     - `static inline id autoreleaseFast(id obj)` - these function presents actual logic to us:
     
-    AutoreleasePoolPage provides a pagination mechanism to fill autorelease pool with objects using page portions. There are two types of pages:
+    `AutoreleasePoolPage` provides a pagination mechanism to fill autorelease pool with objects using page portions. There are two types of pages:
     
 - `static inline AutoreleasePoolPage *hotPage();` - this page is the most recent AutoreleasePoolPage instance stored right into the thread specific memory.
 - `static inline AutoreleasePoolPage *coldPage();` - is the most "old" page.
 
-Pages are used as a containers for autorelease object pointers. What does it mean? Page has explicit size defined with SIZE field. It rather simple pointer arithmetic to get object memory bounds. Initially pointer has start address of the allocated for class memory, it's lower bound. If we know size (and we know), we can calculate upper bound by simple addition. So we know how much objects can we place. From the class declaration we know that `next` is responsible for keeping pointers to the autoreleased objects. To simplify explanation I created rough layout of the AutoreleasePoolPage:
+Pages are used as a containers for autorelease object pointers. What does it mean? Page has explicit size defined with `SIZE` field. It rather simple pointer arithmetic to get object memory bounds. Initially pointer has start address of the allocated for class memory, it's lower bound. If we know size (and we know), we can calculate upper bound by simple addition. So we know how much objects can we place. From the class declaration we know that `next` is responsible for keeping pointers to the autoreleased objects. To simplify explanation I created rough layout of the `AutoreleasePoolPage`:
 
 ![AutoreleasePoolPage Layout]({{ site.url }}/assets/autoreleasepoolpage_layout.png)
 
 Initially, `next` is empty and points to the first slot for `(id *)autoreleased` object. It's right behing the values of the instance variables section . When object arrives for autoreleasing `next` pointer value is filled with the pointer to the autoreleased object and after that shifted to the next cell using C-based pointers arithmetic.
 
-Ok, the most usual case when there is at least one existing pool page is explained. But if initially there is no pool page, what's in that case? And what about full page issue? The answer is pretty clear new empty AutoreleasePoolPage should be created. In both cases it will stored as a hot page, the difference is that the 2nd case with full page will set pointers for `page->parent` and `page->child` to keep linked list sequence.
+Ok, the most usual case when there is at least one existing pool page is explained. But if initially there is no pool page, what's in that case? And what about full page issue? The answer is pretty clear new empty `AutoreleasePoolPage` should be created. In both cases it will stored as a hot page, the difference is that the 2nd case with full page will set pointers for `page->parent` and `page->child` to keep linked list sequence.
 
 So the execution tree looks like:
 
@@ -122,7 +122,7 @@ So the execution tree looks like:
                 - `setHotPage(page);`
                 - `page->add(obj);`
     
-However, `autorelease` is about delayed releasing and at the moment we checked how pool collects information about autoreleased objects. From documentation it's clear that releasing should be performed at the end of `@autoreleasepool` scope. Source code contains the following method:
+However, `autorelease` is about delayed releasing and at the moment we checked how pool collects information about autoreleased objects. From documentation it's clear that releasing should be performed at the end of scope. Source code contains the following method:
 
 - `static inline void pop(void *token)`, which performs clean up of the pool pages that are later than page by token.
 
@@ -154,7 +154,7 @@ As it was described basic ideas are pretty simple: linked list data structure fo
 
 **Tips and tricks**
 
-About magic. As you probably noticed there was a magic in the AutoreleasePoolPage. I mean real magic. I mean real `magic` field. Remember?
+About magic. As you probably noticed there was a magic in the `AutoreleasePoolPage`. I mean real magic. I mean real `magic` field. Remember?
 
 - `magic_t const magic;`
 
@@ -212,7 +212,7 @@ And `busted` even more plainly confirms that:
 ```
 void busted(bool die = true) {
 // ...
-_objc_inform("autorelease pool page %p corrupted\n"
+_objc_fatal("autorelease pool page %p corrupted\n"
              "  magic     0x%08x 0x%08x 0x%08x 0x%08x\n"
              "  should be 0x%08x 0x%08x 0x%08x 0x%08x\n"
              "  pthread   %p\n"
@@ -223,9 +223,9 @@ _objc_inform("autorelease pool page %p corrupted\n"
 
 **References**
 
-- [1] Reference counting on Wikipedia - https://en.wikipedia.org/wiki/Reference_counting
-- [2] - https://clang.llvm.org/docs/AutomaticReferenceCounting.html
-- [3] NSAutoreleasePool class reference - https://developer.apple.com/reference/foundation/nsautoreleasepool
-- [4] Using Autorelease Pool Blocks - https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html
-- [5] Mike Ash, Let's build an NSAutoreleasePool - https://www.mikeash.com/pyblog/friday-qa-2011-09-02-lets-build-nsautoreleasepool.html
-- [6] FreeBSD Man pages - https://www.freebsd.org/cgi/man.cgi?query=pthread_setspecific&sektion=3
+- [Reference counting on Wikipedia](https://en.wikipedia.org/wiki/Reference_counting)
+- [Clang Automatic Reference Counting][https://clang.llvm.org/docs/AutomaticReferenceCounting.html]
+- [NSAutoreleasePool class reference](https://developer.apple.com/reference/foundation/nsautoreleasepool)
+- [Using Autorelease Pool Blocks] (https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html)
+- [Mike Ash, Let's build an NSAutoreleasePool](https://www.mikeash.com/pyblog/friday-qa-2011-09-02-lets-build-nsautoreleasepool.html)
+- [FreeBSD Man pages](https://www.freebsd.org/cgi/man.cgi?query=pthread_setspecific&sektion=3)
