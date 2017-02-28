@@ -90,12 +90,12 @@ Even at this moment we can assume that autoreleasepool is stored using these pth
 
 This information was retrieved by investigation of the separate fields usage and analysis of their declaration. However, we have also available methods and execution flow, which could provide us another side of the picture.
 
-Let's go back to the `AutoreleasePoolPage::autorelease` and go through the execution branches.
+Let's go back to the `AutoreleasePoolPage::autorelease`.
 
 - `static inline id autorelease(id obj)` - is just a wrapper with a few simple verifications calls `autoreleaseFast`
-    - `static inline id autoreleaseFast(id obj)` - these function presents actual logic to us:
+    - `static inline id autoreleaseFast(id obj)` - this function presents actual logic to us:
     
-    `AutoreleasePoolPage` provides a pagination mechanism to fill autorelease pool with objects using page portions. There are two types of pages:
+`AutoreleasePoolPage` provides a pagination mechanism to fill autorelease pool with objects using page portions. There are two types of pages:
     
 - `static inline AutoreleasePoolPage *hotPage();` - this page is the most recent AutoreleasePoolPage instance stored right into the thread specific memory.
 - `static inline AutoreleasePoolPage *coldPage();` - is the most "old" page.
