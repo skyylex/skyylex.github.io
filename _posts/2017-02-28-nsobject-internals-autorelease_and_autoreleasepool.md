@@ -104,9 +104,9 @@ Pages are used as a containers for autorelease object pointers. What does it mea
 
 ![AutoreleasePoolPage Layout]({{ site.url }}/assets/autoreleasepoolpage_layout.png)
 
-Initially, `next` is empty and points to the first slot for `(id *)autoreleased` object. It's right behing the values of the instance variables section . When object arrives for autoreleasing `next` pointer value is filled with the pointer to the autoreleased object and after that shifted to the next cell using C-based pointers arithmetic.
+Initially, `next` is empty and points to the first slot for `(id *)autoreleased` object. It's right behind the values of the instance variables section . When object arrives for autoreleasing `next` pointer value is filled with the pointer to the autoreleased object and after that shifted to the next cell using C-based pointers arithmetic.
 
-Ok, the most usual case when there is at least one existing pool page is explained. But if initially there is no pool page, what's in that case? And what about full page issue? The answer is pretty clear new empty `AutoreleasePoolPage` should be created. In both cases it will stored as a hot page, the difference is that the 2nd case with full page will set pointers for `page->parent` and `page->child` to keep linked list sequence.
+Ok, the most usual case when there is at least one existing pool page is explained. But if initially there is no pool page, what's in that case? And what about full page issue? The answer is pretty clear new empty `AutoreleasePoolPage` should be created. In both cases it will stored as a hot page, the difference is that the 2nd case with full page will set pointers for `page->parent` and `page->child` to keep linked list sequence. Linked list is a way to hold all pages using correct execution order.
 
 So the execution tree looks like:
 
@@ -150,7 +150,7 @@ The simplified execution tree looks like:
             - `delete deathptr;`
         - `while (deathptr != this);` // go back and destroy if all later pages
 
-It's 2 step clean up. First move deep to the newest pages which are below the boundary page and perfom release for all stored there object. After all required autorelease objects will be released, destroy all related pages. Pretty simple, isn't it?
+It's 2 step clean up. First move deeply to the newest pages which are below the boundary page and perfom release for all stored there object. After all required autorelease objects will be released, destroy all related pages. Pretty simple, isn't it?
 
 **Summary.**
 
@@ -199,7 +199,7 @@ struct magic_t {
 };
 ```
 
-I'm not expert in magic, so here it's only assumption, which I have. First of all it's clear that this `struct` itself isn't very useful. Initializing variable with equal values and checking them for equality doesn't make a lot of sense. The only reason I see when something is going wrong with memory and allocated memory borders are broken, memory could be overwritten. 
+I'm not expert in magic, so here it's only assumption. First of all it's clear that this `struct` itself isn't very useful. Initializing variable with equal values and checking them for equality doesn't make a lot of sense. The only reason I see when something is going wrong with memory and allocated memory borders are broken, memory could be overwritten. 
 
 So how this field is used? 
 ```
@@ -227,7 +227,7 @@ _objc_fatal("autorelease pool page %p corrupted\n"
 
 **P.S.**
 
-The most basic details were covered here, however, there are some difficultiles with mapping of available source code with disassembly. ARC runtime support functions are actual citizens there. So it's interesting challenge to collect puzzle from two such different sides. Who knows, may be in some of the future posts?
+The most basic details were covered here, however, there are some difficultiles with mapping current picture of available source code with disassembly. ARC runtime support functions are actual citizens there. So it's interesting challenge to collect puzzle from two such different sides. Who knows, may be in some of the future posts?
 
 **References**
 
