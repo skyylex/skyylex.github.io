@@ -234,6 +234,5 @@ The most basic details were covered here, however, there are some difficultiles 
 - [Reference counting on Wikipedia](https://en.wikipedia.org/wiki/Reference_counting)
 - [Clang Automatic Reference Counting](https://clang.llvm.org/docs/AutomaticReferenceCounting.html)
 - [NSAutoreleasePool class reference](https://developer.apple.com/reference/foundation/nsautoreleasepool)
-- [Using Autorelease Pool Blocks](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html)
 - [Mike Ash, Let's build an NSAutoreleasePool](https://www.mikeash.com/pyblog/friday-qa-2011-09-02-lets-build-nsautoreleasepool.html)
 - [FreeBSD Man pages](https://www.freebsd.org/cgi/man.cgi?query=pthread_setspecific&sektion=3)
