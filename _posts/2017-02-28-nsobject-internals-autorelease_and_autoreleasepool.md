@@ -31,7 +31,7 @@ Notice #2: Objective-C source code contains a lot of details related to edge cas
 
 Let's start with the most known part. It's definitely `autorelease` method of `NSObject`. If we skip edge cases such as fast autorelease and tagged pointers and other optimizations, then we will find autorelease core in the `AutoreleasePoolPage::autorelease` call:
 
-```objective-c
+```c++
 __attribute__((noinline,used)) static id _objc_rootAutorelease2(id obj) {
     // ...
     return AutoreleasePoolPage::autorelease(obj);
@@ -40,7 +40,7 @@ __attribute__((noinline,used)) static id _objc_rootAutorelease2(id obj) {
 
 From the first look `AutoreleasePoolPage` class is very similar to the functionality that we were searching for. Let's check what fields this C++ class contains:
 
-```objective-c
+```c++
 class AutoreleasePoolPage 
 {
 
@@ -164,7 +164,7 @@ About magic. As you probably noticed there was a magic in the `AutoreleasePoolPa
 
 And related declaration of the `magic_t`:
 
-```c
+```c++
 struct magic_t {
     static const uint32_t M0 = 0xA1A1A1A1;
 #   define M1 "AUTORELEASE!"
@@ -202,7 +202,7 @@ struct magic_t {
 I'm not expert in magic, so here it's only assumption. First of all it's clear that this `struct` itself isn't very useful. Initializing variable with equal values and checking them for equality doesn't make a lot of sense. The only reason I see when something is going wrong with memory and allocated memory borders are broken, memory could be overwritten. 
 
 So how this field is used? 
-```
+```c++
 void check(bool die = true) 
 {
     if (!magic.check() || !pthread_equal(thread, pthread_self())) {
@@ -213,7 +213,7 @@ void check(bool die = true)
 
 And `busted` even more plainly confirms that:
 
-```
+```c++
 void busted(bool die = true) {
 // ...
 _objc_fatal("autorelease pool page %p corrupted\n"
