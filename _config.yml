@@ -28,6 +28,7 @@ github_username:  skyylex
 
 
 # Build settings
+highlighter: rouge
 markdown: kramdown
 theme: minima
 gems:
