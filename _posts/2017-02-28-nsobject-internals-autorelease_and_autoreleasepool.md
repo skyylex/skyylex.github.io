@@ -1,8 +1,8 @@
 ---
 layout: default
-title: NSObject Internals - autorelease and @autoreleasePool
+title: NSObject Internals. Episode 3 - autorelease and @autoreleasePool
 ---
-**NSObject Internals - `autorelease` and `@autoreleasePool`**
+**NSObject Internals. Episode 3 - `autorelease` and `@autoreleasePool`**
 
 *I would like to thank my friend Mike Litvinets, who helped me with the investigation of AutoreleasePool source code*
 
