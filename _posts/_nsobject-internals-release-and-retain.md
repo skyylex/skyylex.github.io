@@ -1,8 +1,7 @@
 Actual storage is placed in the static `unsigned char *` pointer called SideTableBuf with proper size capable to fit StripedMap<SideTable>.
 
 ```c++
-alignas(StripedMap<SideTable>) static uint8_t 
-    SideTableBuf[sizeof(StripedMap<SideTable>)];
+alignas(StripedMap<SideTable>) static uint8_t SideTableBuf[sizeof(StripedMap<SideTable>)];
 ```
 
 It's not good solution, but it works. Thanks to Apple engineers for putting comments of reasons.
