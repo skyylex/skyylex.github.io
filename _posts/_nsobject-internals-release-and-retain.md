@@ -1,4 +1,4 @@
-Actual storage is placed in the static `unsigned char *` pointer called SideTableBuf with proper size capable to fit StripedMap<SideTable>.
+Actual storage is placed in the static `unsigned char *` pointer called `SideTableBuf` with proper size capable to fit `StripedMap<SideTable>`.
 
 ```c++
 alignas(StripedMap<SideTable>) static uint8_t SideTableBuf[sizeof(StripedMap<SideTable>)];
@@ -68,7 +68,7 @@ class StripedMap {
 };
 ```
 
-`StripedMap` is the implementation of a dictionary (map) class, where `void *` pointer is a key, and T is a template value. Usually, programmers deal with a hash-map. Hash-map has two valuable specifics: 
+`StripedMap` is the implementation of a dictionary (map) class, where `void *` pointer is a key, and `T` is a template value. Usually, programmers deal with a hash-map. Hash-map has two valuable specifics: 
 
 - this kind of map depends heavily on the quality of hash-function
 - there is a mechanism for conflict's solving, when two keys have the same hash. One of the ways is to put store linked list of key-values, instead of value.
@@ -79,7 +79,7 @@ class StripedMap {
 ((addr >> 4) ^ (addr >> 9)) % StripeCount
 ```
 
-Right shift and xor operators can be executed as a few instructions on the most of the modern CPUs, and the reminder also rather trivial. It means that this expression is calculated pretty fast. To get some overview of the statistical distribution, I used simplest simulation of unique pointers by allocating small chunks of memory in for-loop without release. Variable parameters were pointer values count (amount of iterations), different chunks for allocations. In all cases distribution was close to the discrete uniform distribution (equal or almost equal amount of matches on all positions). Consequently, it means that this expression is some kind of hash function.
+Right shift and xor operators can be executed as a few instructions on the most of the modern CPUs, and the reminder also rather trivial. It means that this expression is calculated pretty fast. To get some overview of the statistical distribution, I used simplest simulation of unique pointers by allocating small chunks of memory in for-loop without release. Variable parameters were pointer values count (amount of iterations), different chunks for allocations. In all cases distribution was close to the discrete uniform distribution (equal or almost equal amount of matches on all positions). Consequently, it means that this expression is some kind of a hash function.
 
 
 
