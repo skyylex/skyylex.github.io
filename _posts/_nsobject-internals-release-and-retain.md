@@ -71,7 +71,7 @@ class StripedMap {
 `StripedMap` is the implementation of a dictionary (map) class, where `void *` pointer is a key, and T is a template value. Usually, programmers deal with a hash-map. Hash-map has two valuable specifics: 
 
 - this kind of map depends heavily on the quality of hash-function
-- there is a kind support for conflict's solving, when two keys have the same hash. One of the ways is to put store linked list of key-values, instead of value.
+- there is a mechanism for conflict's solving, when two keys have the same hash. One of the ways is to put store linked list of key-values, instead of value.
 
 `StripedMap` has something like a hash-function, it is:
 
