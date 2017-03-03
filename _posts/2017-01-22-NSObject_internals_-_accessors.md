@@ -24,38 +24,40 @@ The main idea of the *mutator method* is to restrict direct access to the variab
 
 Related code:
 
-	static inline void reallySetProperty(id self, SEL _cmd, id newValue, ptrdiff_t offset, bool atomic, bool copy, bool mutableCopy)
-    {
-        if (offset == 0) {
-            object_setClass(self, newValue);
-            return;
-        }
-
-        id oldValue;
-        id *slot = (id*) ((char*)self + offset);
-
-        if (copy) {
-            newValue = [newValue copyWithZone:nil];
-        } else if (mutableCopy) {
-            newValue = [newValue mutableCopyWithZone:nil];
-        } else {
-            if (*slot == newValue) return;
-            newValue = objc_retain(newValue);
-        }
-
-        if (!atomic) {
-            oldValue = *slot;
-            *slot = newValue;
-        } else {
-            spinlock_t& slotlock = PropertyLocks[slot];
-            slotlock.lock();
-            oldValue = *slot;
-            *slot = newValue;        
-            slotlock.unlock();
-        }
-
-        objc_release(oldValue);
+```c++
+static inline void reallySetProperty(id self, SEL _cmd, id newValue, ptrdiff_t offset, bool atomic, bool copy, bool mutableCopy)
+{
+    if (offset == 0) {
+        object_setClass(self, newValue);
+        return;
     }
+
+    id oldValue;
+    id *slot = (id*) ((char*)self + offset);
+
+    if (copy) {
+        newValue = [newValue copyWithZone:nil];
+    } else if (mutableCopy) {
+        newValue = [newValue mutableCopyWithZone:nil];
+    } else {
+        if (*slot == newValue) return;
+        newValue = objc_retain(newValue);
+   }
+
+   if (!atomic) {
+        oldValue = *slot;
+        *slot = newValue;
+    } else {
+        spinlock_t& slotlock = PropertyLocks[slot];
+        slotlock.lock();
+        oldValue = *slot;
+        *slot = newValue;        
+        slotlock.unlock();
+    }
+
+    objc_release(oldValue);
+}
+```
 
 Use of the property in program flow starts from receiving first value in the setter method (`reallySetProperty` in our case). Basically, the simplest form of setter function needs to have only a pointer to the target `ivar` and value to set.
 `reallySetProperty` contains more parameters:
@@ -81,15 +83,17 @@ The `reallySetProperty` could be split into several steps:
 **Setter step #1. Class update**
 
 Related code:
-
-    if (offset == 0) {
-	    object_setClass(self, newValue);
-        return;
-    }
+```c++
+if (offset == 0) {
+    object_setClass(self, newValue);
+    return;
+}
+```
 
 Clear explanation of this step requires additional information. Target variable for update is located in the `id self`, if you check `id` type declaration you will see:
-
-`typedef struct objc_object *id;`
+```c++
+typedef struct objc_object *id;
+```
 
 Therefore, it's a C-struct. And this gives us more information for analysis. Because struct has essential feature related to layout in memory (C99 standard):
 
@@ -109,8 +113,10 @@ Ok, now it's clear, that request for update using offset == 0 is a class variabl
 
 Related code:
 
-    id oldValue;
-    id *slot = (id*) ((char*)self + offset);
+```c++
+id oldValue;
+id *slot = (id*) ((char*)self + offset);
+```
 
 Calculation of the pointer is rather trivial, just need to calculate necessary address using a base address and offset. The only interesting issue for me is why Objective-C implementation uses offset at all? (Another option using direct reference). I have no facts here, my assumption that calculation of the instance variable address doesn't cost too much in terms of processor time, in the same time such referencing is very flexible against address changes and could be easily verified. Also, such technique potentially will use less memory, because offset can have a small type, based on the known total layout size.
 
@@ -118,14 +124,16 @@ Calculation of the pointer is rather trivial, just need to calculate necessary a
 
 Another branching in the code takes place. The same as it's described in the apple docs, if you place copy qualificator - value is copied and isn't retained, because copy already set to 1 reference counter during creation.
 
-	if (copy) {
-        newValue = [newValue copyWithZone:nil];
-    } else if (mutableCopy) {
-        newValue = [newValue mutableCopyWithZone:nil];
-    } else {
-        if (*slot == newValue) return;
-        newValue = objc_retain(newValue);
-    }
+```c++
+if (copy) {
+    newValue = [newValue copyWithZone:nil];
+} else if (mutableCopy) {
+    newValue = [newValue mutableCopyWithZone:nil];
+} else {
+    if (*slot == newValue) return;
+    newValue = objc_retain(newValue);
+}
+```
 
 **Setter step #4. Set new value in the appropriate way (`atomic` / `nonatomic`)**
 
@@ -133,23 +141,26 @@ It's the core functionality to change value of `ivar`. There is a probability of
 
 **Notice**: `atomic` is the default behaviour for all properties. And the downside is common for all thread synchronization techniques, all locks make a code a little bit slower.
 
-	if (!atomic) {
-        oldValue = *slot;
-        *slot = newValue;
-    } else {
-        spinlock_t& slotlock = PropertyLocks[slot];
-        slotlock.lock();
-        oldValue = *slot;
-        *slot = newValue;        
-        slotlock.unlock();
-    }
+```c++
+if (!atomic) {
+    oldValue = *slot;
+    *slot = newValue;
+} else {
+    spinlock_t& slotlock = PropertyLocks[slot];
+    slotlock.lock();
+    oldValue = *slot;
+    *slot = newValue;        
+    slotlock.unlock();
+}
+```
 
 Before setting the value, an old one is saved to handle related memory. After that pointer is dereferenced and a new value is applied.
 
 **Setter step 5. Release old value**
 
-    objc_release(oldValue);
-
+```c++
+objc_release(oldValue);
+```
 
 Step #4 saved old pointer to the memory and current step is to release it. All setter branches of execution create a pointer with +1 at step #3 via copy or retain, so release pair should be applied in setter method explicitly. Another place requires release is at the end of the `self` pointer life-cycle. An earlier versions of Objective-C (with MRC) required this job to be done in `-(void)dealloc`. However, current Apple documentation ensures that runtume handles it itself.
 
@@ -163,25 +174,26 @@ dealloc methods in ARC do not require—or allow—a call to [super dealloc]; th
 
 Related code:
 
-
-    id objc_getProperty(id self, SEL _cmd, ptrdiff_t offset, BOOL atomic) {
-        if (offset == 0) {
-            return object_getClass(self);
-        }
-    
-        // Retain release world
-        id *slot = (id*) ((char*)self + offset);
-        if (!atomic) return *slot;
-        
-        // Atomic retain release world
-        spinlock_t& slotlock = PropertyLocks[slot];
-        slotlock.lock();
-        id value = objc_retain(*slot);
-        slotlock.unlock();
-    
-        // for performance, we (safely) issue the autorelease OUTSIDE of the spinlock.
-        return objc_autoreleaseReturnValue(value);
+```c++
+id objc_getProperty(id self, SEL _cmd, ptrdiff_t offset, BOOL atomic) {
+    if (offset == 0) {
+        return object_getClass(self);
     }
+    
+    // Retain release world
+    id *slot = (id*) ((char*)self + offset);
+    if (!atomic) return *slot;
+        
+    // Atomic retain release world
+    spinlock_t& slotlock = PropertyLocks[slot];
+    slotlock.lock();
+    id value = objc_retain(*slot);
+    slotlock.unlock();
+    
+    // for performance, we (safely) issue the autorelease OUTSIDE of the spinlock.
+    return objc_autoreleaseReturnValue(value);
+}
+```
 
 The flow for the getter is quite similar. Steps #1 and #2 is almost the same as in setter. The difference is the atomic/nonatomic behavior. Thread-safety isn't taken into account. It follows setter logic (to prevent read-write conflict). I mean that atomic object is retained and nonatomic is not. Basically, setter is already retaining the `value`, so in the simple case value doesn't need to retained/released once again. And nonatomic approach probably was planned as a flow when another thread doesn't release the `value`. `atomic` was built over the idea to make able to grab value inside the lock and to allow to return it from function ignoring other threads activity.
 
