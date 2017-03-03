@@ -138,5 +138,5 @@ Second point is the most interesting. As I said previously, hash-maps usually co
 
 **References:**
 
-- [Reference for alignas](http://en.cppreference.com/w/cpp/language/alignas)
+- [Reference for `alignas`](http://en.cppreference.com/w/cpp/language/alignas)
 - [Reference page for `new`](http://en.cppreference.com/w/cpp/language/new)
