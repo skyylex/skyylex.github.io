@@ -210,4 +210,4 @@ The flow for the getter is quite similar. Steps #1 and #2 is almost the same as 
 
 **Thank you for reading!**
 
-**[<<<< previous episode]({{site.url}}/NSObject_internals_-_alloc)**
+**[<<<< previous episode]({{site.url}}/NSObject_internals_-_alloc) - [next episode >>>>]({{site.url}}/nsobject-internals-autorelease_and_autoreleasepool)**
