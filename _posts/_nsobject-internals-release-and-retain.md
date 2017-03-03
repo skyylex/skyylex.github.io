@@ -81,14 +81,16 @@ class StripedMap {
 
 Right shift (`>>`) and xor (`^`) operators can be executed as a few instructions on the most of the modern CPUs, and the modulus operator (`%`) also rather trivial. It means that this expression is calculated pretty fast. To get some overview of the statistical distribution, I used simplest simulation of calculation hash using memory pointers by allocating small chunks of memory in for-loop without releasing them (it will guarantee that adress will be unique). Variable parameters were pointer values count (amount of iterations), different chunks for allocations. In all cases distribution was close to the discrete uniform distribution (equal or almost equal amount of matches on all positions). Consequently, we can think about this function as a hash function.
 
-Second point is the most interesting. As I said previously, hash-maps usually contains mechanism for handling conflicts during filling value for key and keeping data structure able to return value for key later. `StripedMap` is a different thing. It is an internal storage implemented as an statically-defined array. That means that internal storage will be allocated and filled at the end of StripeMap creation. Also it's clear that this is read-only data structure, developer can only get value by key using overloaded operators in `public:` class interface section. So if we collect these facts and keep in mind word `striping`, it's become clear what this class actually do. It splits access to certain recources based on the pointer. Resources are counted as equal, so the main goal to have stable repeatable access to the same resources each time (no matter what exactly this resource will be). 
+Second point is the most interesting. As I said previously, hash-maps usually contains mechanism for handling conflicts during filling value for key and keeping data structure able to return value for key later. `StripedMap` is a different thing. It is an internal storage implemented as an statically-defined array. That means that internal storage will be allocated and filled at the end of StripeMap creation. Also it's clear that this is read-only data structure, developer can only get value by key using overloaded operators in `public:` class interface section. So if we collect these facts and keep in mind word `striping`, it's become clear what this class actually does. It splits access to certain recources based on the pointer. Resources are counted as equal, so the main goal to have stable repeatable access to the same resources each time (no matter what exactly this resource will be, the main thing that it's the same). This info was partially described in the comment in source code:
 
 > // StripedMap<T> is a map of void* -> T, sized appropriately <br/>
 > // for cache-friendly lock striping. <br/>
 > // For example, this may be used as StripedMap<spinlock_t> <br/>
 > // or as StripedMap<SomeStruct> where SomeStruct stores a spin lock.
 
-Comment also points out about cache-friendlyness
+Comment also points out about cache-friendliness.
+
+For curious: if you take a look at the earlier versions of Objective-C source code you will see no StripedMap. Most probably that this striping performance optimization was included on demand. SideTable must use some sort of synchronization which become a bottle neck in programming language with reference counting.
 
 **References:**
 
