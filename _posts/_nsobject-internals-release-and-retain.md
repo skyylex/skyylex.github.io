@@ -1,10 +1,56 @@
-Actual storage is placed in the static `unsigned char *` pointer called `SideTableBuf` with proper size capable to fit `StripedMap<SideTable>`.
+**Introduction**
+
+Today is the 4th episode of NSObject Internals and we'll touch `retain` and `release` messages. Previous episode has already described some of the reference counting specifics, so to not repeat myself I will immediately jump into the details.
+
+**Notice:** Topic is very broad, so I will talk only about direct usage of `retain` and `release` messages. 
+
+**Source code**
+
+As usual let's see what is hidden inside `retain` by examination of the possible execution tree:
+
+- `(id)retain`
+    - `inline id objc_object::rootRetain()`
+        - `// ... something about deprecated Garbage Collection`
+        - `// ... something about tagged pointers`
+        - `id objc_object::sidetable_retain()`
+        
+Here I should stop. We have already met with `objc_object`, off course not explicitly. Anyway, it's what lies behind black-boxed `id`.
+
+```c++
+typedef struct objc_object *id;
+```
+
+But today is not `objc_object` day, it's interesting topic deserves a separate post and we'll cover it one day. Go back to the `retain`, its core implementation lies in the `sideTable_retain()` method:
+
+```c++
+id objc_object::sidetable_retain()
+    // ..
+    SideTable& table = SideTables()[this];
+
+    if (table.trylock()) {
+        size_t& refcntStorage = table.refcnts[this];
+        if (! (refcntStorage & SIDE_TABLE_RC_PINNED)) {
+            refcntStorage += SIDE_TABLE_RC_ONE;
+        }
+        table.unlock();
+        return (id)this;
+    }
+    return sidetable_retain_slow(table);
+}
+```
+
+Actually, if we skip some implementation details such as what is `SideTable`, `refcnts`, `SIDE_TABLE_RC_PINNED`, we'll see synchronized way to increase counter. So retain is the same as what is written in the documentation, just increasing counter by one. But I went here not to double check that. So let's try to look around and see what we can find.
+
+/// #TBD SIDE_TABLE_RC_PINNED
+
+
+Actual storage is placed in the static `unsigned char *` pointer called `SideTableBuf` with a proper size capable to fit `StripedMap<SideTable>`.
 
 ```c++
 alignas(StripedMap<SideTable>) static uint8_t SideTableBuf[sizeof(StripedMap<SideTable>)];
 ```
 
-It's not good solution, but it works. Thanks to Apple engineers for putting comments of reasons.
+The solution above is not good, but it works. Thanks to Apple engineers for putting comments of reasons.
 
 > // We cannot use a C++ static initializer to initialize SideTables because <br>
 > // libc calls us before our C++ initializers run. We also don't want a global <br>
@@ -19,16 +65,14 @@ static void SideTableInit() {
 }
 ```
 
-I'm not C++ man, so it was a little bit tricky for me to understand. `new` operator have a lot of variations. 
-Current call is similar to so-called *placement new* operator. 
+I'm not C++ man, so it was a little bit tricky for me to understand. Generally, `new` operator has a lot of variations. Current variant is similar to so-called *placement new* operator. 
 
 ```c++
 void* operator new(std::size_t, void*)
 ```
 
-This version takes additional pointer parameter, which is used to refer to pre-allocated storage. 
-So C++ class constructor uses this storage without allocating any other. The other effect, that the result of `new` isn't used. 
-It has the same reason, because *placement new* operator use pre-allocated storage the value (void *pointer) will be the same as parameter.
+This version takes additional pointer parameter, which is used to refer to pre-allocated storage. C++ class constructor uses this storage without allocating any other. The other effect, that there is no need to use returned result of `new`. 
+It has the same reason, *placement new* operator uses pre-allocated storage via passed pointer, so returned pointer will be the same as argument.
 
 And in order to use this storage, `uint8_t *` pointer is casted to actual stored class:
 
@@ -79,7 +123,9 @@ class StripedMap {
 ((addr >> 4) ^ (addr >> 9)) % StripeCount
 ```
 
-Right shift (`>>`) and xor (`^`) operators can be executed as a few instructions on the most of the modern CPUs, and the modulus operator (`%`) also rather trivial. It means that this expression is calculated pretty fast. To get some overview of the statistical distribution, I used simplest simulation of calculation hash using memory pointers by allocating small chunks of memory in for-loop without releasing them (it will guarantee that adress will be unique). Variable parameters were pointer values count (amount of iterations), different chunks for allocations. In all cases distribution was close to the discrete uniform distribution (equal or almost equal amount of matches on all positions). Consequently, we can think about this function as a hash function.
+Right shift (`>>`) and xor (`^`) operators can be executed as a few instructions on the most of the modern CPUs, and the modulus operator (`%`) also rather trivial. It means that this expression is calculated pretty fast. To get some overview of the statistical distribution, I used naive simulation to see how pseudo hashes are distributed over the array. 
+
+I have created ordinary for loop and used malloc to create new unique pointer, and passed this pointer address as input parameter to pseudo-hash function. (Important point here to not free these memory, because you OS will re-use freed memory and you'll get the same value multiple times.). I varied parameters such as pointer values count (amount of iterations), different chunk sizes for allocations. In all cases distribution was close to the discrete uniform distribution (equal or almost equal amount of matches on all positions). Consequently, we can think about this pseudo-hash as a hash function.
 
 Second point is the most interesting. As I said previously, hash-maps usually contains mechanism for handling conflicts during filling value for key and keeping data structure able to return value for key later. `StripedMap` is a different thing. It is an internal storage implemented as an statically-defined array. That means that internal storage will be allocated and filled at the end of StripeMap creation. Also it's clear that this is read-only data structure, developer can only get value by key using overloaded operators in `public:` class interface section. So if we collect these facts and keep in mind word `striping`, it's become clear what this class actually does. It splits access to certain recources based on the pointer. Resources are counted as equal, so the main goal to have stable repeatable access to the same resources each time (no matter what exactly this resource will be, the main thing that it's the same). This info was partially described in the comment in source code:
 
@@ -88,10 +134,9 @@ Second point is the most interesting. As I said previously, hash-maps usually co
 > // For example, this may be used as StripedMap<spinlock_t> <br/>
 > // or as StripedMap<SomeStruct> where SomeStruct stores a spin lock.
 
-Comment also points out about cache-friendliness.
-
-For curious: if you take a look at the earlier versions of Objective-C source code you will see no StripedMap. Most probably that this striping performance optimization was included on demand. SideTable must use some sort of synchronization which become a bottle neck in programming language with reference counting.
+**For curious:** if you take a look at the earlier versions of Objective-C source code you will see no StripedMap. Most probably that this striping performance optimization was included for actuall necessity. SideTable uses synchronization which become a bottle neck in programming language with reference counting.
 
 **References:**
 
+- [Reference for alignas](http://en.cppreference.com/w/cpp/language/alignas)
 - [Reference page for `new`](http://en.cppreference.com/w/cpp/language/new)
