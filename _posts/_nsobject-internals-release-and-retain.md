@@ -73,15 +73,22 @@ class StripedMap {
 - this kind of map depends heavily on the quality of hash-function
 - there is a mechanism for conflict's solving, when two keys have the same hash. One of the ways is to put store linked list of key-values, instead of value.
 
-`StripedMap` has something like a hash-function, it is:
+`StripedMap` has something like a hash-function, it is the following expression:
 
 ```c++
 ((addr >> 4) ^ (addr >> 9)) % StripeCount
 ```
 
-Right shift and xor operators can be executed as a few instructions on the most of the modern CPUs, and the reminder also rather trivial. It means that this expression is calculated pretty fast. To get some overview of the statistical distribution, I used simplest simulation of unique pointers by allocating small chunks of memory in for-loop without release. Variable parameters were pointer values count (amount of iterations), different chunks for allocations. In all cases distribution was close to the discrete uniform distribution (equal or almost equal amount of matches on all positions). Consequently, it means that this expression is some kind of a hash function.
+Right shift (`>>`) and xor (`^`) operators can be executed as a few instructions on the most of the modern CPUs, and the modulus operator (`%`) also rather trivial. It means that this expression is calculated pretty fast. To get some overview of the statistical distribution, I used simplest simulation of calculation hash using memory pointers by allocating small chunks of memory in for-loop without releasing them (it will guarantee that adress will be unique). Variable parameters were pointer values count (amount of iterations), different chunks for allocations. In all cases distribution was close to the discrete uniform distribution (equal or almost equal amount of matches on all positions). Consequently, we can think about this function as a hash function.
 
+Second point is the most interesting. As I said previously, hash-maps usually contains mechanism for handling conflicts during filling value for key and keeping data structure able to return value for key later. `StripedMap` is a different thing. It is an internal storage implemented as an statically-defined array. That means that internal storage will be allocated and filled at the end of StripeMap creation. Also it's clear that this is read-only data structure, developer can only get value by key using overloaded operators in `public:` class interface section. So if we collect these facts and keep in mind word `striping`, it's become clear what this class actually do. It splits access to certain recources based on the pointer. Resources are counted as equal, so the main goal to have stable repeatable access to the same resources each time (no matter what exactly this resource will be). 
 
+> // StripedMap<T> is a map of void* -> T, sized appropriately <br/>
+> // for cache-friendly lock striping. <br/>
+> // For example, this may be used as StripedMap<spinlock_t> <br/>
+> // or as StripedMap<SomeStruct> where SomeStruct stores a spin lock.
+
+Comment also points out about cache-friendlyness
 
 **References:**
 
