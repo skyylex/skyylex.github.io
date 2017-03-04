@@ -1,8 +1,8 @@
 **Introduction**
 
-Today is the 4th episode of NSObject Internals and we'll touch `retain` and `release` messages. Previous episode has already described some of the reference counting specifics, so to not repeat myself I will immediately jump into the details.
+Today is the 4th episode of NSObject Internals and we'll touch `retain` and `release`. Previous episode has already described some of the reference counting specifics, so to not repeat myself I will immediately jump into the details.
 
-**Notice:** Topic is very broad, so I will talk only about direct usage of `retain` and `release` messages. 
+**Notice:** Topic is very broad, so I will talk only about direct usage of `retain` and `release` methods. 
 
 **Source code**
 
@@ -14,7 +14,7 @@ As usual let's see what is hidden inside `retain` by examination of the possible
         - `// ... something about tagged pointers`
         - `id objc_object::sidetable_retain()`
         
-Here I should stop. We have already met with `objc_object`, off course not explicitly. Anyway, it's what lies behind black-boxed `id`.
+Here I should stop. We have already met with `objc_object`, not personally. Anyway, it's what lies behind black-boxed `id` struct.
 
 ```c++
 typedef struct objc_object *id;
@@ -43,7 +43,9 @@ Actually, if we skip some implementation details such as what is `SideTable`, `r
 
 /// #TBD SIDE_TABLE_RC_PINNED
 
-Interesting point here is that initially `sidetable_retain` uses fast way to increase pointer via `.tryLock()` and if it's locked call, but `sidetable_retain_slow` is almost the same. Key differences are that `sidetable_retain_slow` gets `table` as a parameter (opposite to direct call to SideTables) and use `lock` instead of `tryLock`.
+Interesting point here is that initially `sidetable_retain` uses fast way to increase counter via `.tryLock()` and if it's locked use `sidetable_retain_slow()`. But `sidetable_retain_slow` is almost the same. Key differences are that `sidetable_retain_slow` gets `table` as a parameter (opposite to direct call to SideTables) and uses `lock` instead of `tryLock`. 
+
+/// #TBD tryLock vs Lock
 
 Actual storage is placed in the static `unsigned char *` pointer called `SideTableBuf` with a proper size capable to fit `StripedMap<SideTable>`.
 
