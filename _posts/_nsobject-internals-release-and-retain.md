@@ -43,6 +43,7 @@ Actually, if we skip some implementation details such as what is `SideTable`, `r
 
 /// #TBD SIDE_TABLE_RC_PINNED
 
+Interesting point here is that initially `sidetable_retain` uses fast way to increase pointer via `.tryLock()` and if it's locked call, but `sidetable_retain_slow` is almost the same. Key differences are that `sidetable_retain_slow` gets `table` as a parameter (opposite to direct call to SideTables) and use `lock` instead of `tryLock`.
 
 Actual storage is placed in the static `unsigned char *` pointer called `SideTableBuf` with a proper size capable to fit `StripedMap<SideTable>`.
 
