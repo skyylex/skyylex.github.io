@@ -1,6 +1,6 @@
 **Introduction**
 
-Today is the 4th episode of NSObject Internals and we'll touch `retain` and `release`. Previous episode has already described some of the reference counting specifics, so to not repeat myself I will immediately jump into the details.
+Today is the 4th episode of NSObject Internals and we'll touch `retain` and `release`. [Previous episode](https://skyylex.github.io/nsobject-internals-autorelease_and_autoreleasepool) has already described some of the reference counting specifics, so to not repeat myself I will immediately jump into the details.
 
 **Notice:** Topic is very broad, so I will talk only about direct usage of `retain` and `release` methods. 
 
@@ -39,13 +39,11 @@ id objc_object::sidetable_retain()
 }
 ```
 
-Actually, if we skip some implementation details such as what is `SideTable`, `refcnts`, `SIDE_TABLE_RC_PINNED`, we'll see synchronized way to increase counter. So retain is the same as what is written in the documentation, just increasing counter by one. But I went here not to double check that. So let's try to look around and see what we can find.
+Actually, if we skip some implementation details such as what is `SideTable`, `refcnts`, `SIDE_TABLE_RC_PINNED`, we'll see synchronized way to increase counter. So retain is the same as what is written in the documentation, just increasing counter by one. But we came here, not only to verify that, so let's try to look around and see what we can find.
 
 /// #TBD SIDE_TABLE_RC_PINNED
 
-Interesting point here is that initially `sidetable_retain` uses fast way to increase counter via `.tryLock()` and if it's locked use `sidetable_retain_slow()`. But `sidetable_retain_slow` is almost the same. Key differences are that `sidetable_retain_slow` gets `table` as a parameter (opposite to direct call to SideTables) and uses `lock` instead of `tryLock`. 
-
-/// #TBD tryLock vs Lock
+Interesting point here is that initially `sidetable_retain` uses "fast" way to increase counter via `.tryLock()` and if it's locked, then jump to `sidetable_retain_slow()`. But `sidetable_retain_slow` is almost the same. Key differences are that `sidetable_retain_slow` gets `table` as a parameter (versus direct call to SideTables in `sidetable_retain`) and uses `lock` instead of `tryLock`. 
 
 Actual storage is placed in the static `unsigned char *` pointer called `SideTableBuf` with a proper size capable to fit `StripedMap<SideTable>`.
 
