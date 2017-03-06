@@ -43,7 +43,7 @@ Actually, if we skip some implementation details such as what is `SideTable`, `r
 
 /// #TBD SIDE_TABLE_RC_PINNED
 
-Interesting point here is that initially `sidetable_retain` uses "fast" way to increase counter via `.tryLock()` and if it's locked, then jump to `sidetable_retain_slow()`. But `sidetable_retain_slow` is almost the same. Key differences are that `sidetable_retain_slow` gets `table` as a parameter (versus direct call to SideTables in `sidetable_retain`) and uses `lock` instead of `tryLock`. 
+Interesting point here is that initially `sidetable_retain` uses "fast" way to increase counter via `.tryLock()` and if it's locked, then jump to `sidetable_retain_slow()`. But `sidetable_retain_slow` is almost the same. Key differences are that `sidetable_retain_slow` gets `table` as a parameter (versus direct call to SideTables in `sidetable_retain`) and uses `lock` instead of `tryLock`. I don't find clear reason for that, also as concrete answer in the source code. However I have one assumption that it could be an optimization trick. Some mutex implementations use thread scheduler that moves locked threads into sleep mode and wakes them up when unlock trigger fires (another option to wrap them into while loop and keep them runable). This switching process in general should not consume too much CPU time, however the overhead becomes bigger when there are a lot of calls to the mutex.
 
 Actual storage is placed in the static `unsigned char *` pointer called `SideTableBuf` with a proper size capable to fit `StripedMap<SideTable>`.
 
