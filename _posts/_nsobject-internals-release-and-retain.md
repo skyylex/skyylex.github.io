@@ -43,9 +43,15 @@ Actually, if we skip some implementation details such as what is `SideTable`, `r
 
 /// #TBD SIDE_TABLE_RC_PINNED
 
-Interesting point here is that initially `sidetable_retain` uses "fast" way to increase counter via `.tryLock()` and if it's locked, then jump to `sidetable_retain_slow()`. But `sidetable_retain_slow` is almost the same. Key differences are that `sidetable_retain_slow` gets `table` as a parameter (versus direct call to SideTables in `sidetable_retain`) and uses `lock` instead of `tryLock`. I don't find clear reason for that, also as concrete answer in the source code. However I have one assumption that it could be an optimization trick. Some mutex implementations use thread scheduler that moves locked threads into sleep mode and wakes them up when unlock trigger fires (another option to wrap them into while loop and keep them runable). This switching process in general should not consume too much CPU time, however the overhead becomes bigger when there are a lot of calls to the mutex.
+Interesting point here is that initially `sidetable_retain` uses "fast" way to increase counter via `.tryLock()` and if it's locked, then jump to `sidetable_retain_slow()`. But `sidetable_retain_slow` is almost the same. Key differences are that `sidetable_retain_slow` gets `table` as a parameter (versus direct call to SideTables in `sidetable_retain`) and uses `lock` instead of `tryLock`. I don't find clear reason for that, also as concrete answer in the source code. However I have one assumption that it could be an optimization trick. Some mutex implementations use thread scheduler that moves locked threads into sleep mode and wakes them up when unlock trigger fires (another option to wrap them into while loop and keep them runable). So may be in general case it's faster to use `trylock` first.
 
-Actual storage is placed in the static `unsigned char *` pointer called `SideTableBuf` with a proper size capable to fit `StripedMap<SideTable>`.
+**Notice:** I tried to perform some sort of simulation to get understanding via experiments with `pthread`. However, the only practical result I got is that in single-threaded mode `trylock` works slower than `lock`. Other multi-threaded simulations don't show the average case, but some edge cases and each result is different from previous.
+
+Let's move to the details, and start with SideTable 
+
+#TBD SideTable class
+
+Actual storage of SideTable is placed in the static `unsigned char *` pointer called `SideTableBuf` with a proper size capable to fit `StripedMap<SideTable>`.
 
 ```c++
 alignas(StripedMap<SideTable>) static uint8_t SideTableBuf[sizeof(StripedMap<SideTable>)];
@@ -135,7 +141,7 @@ Second point is the most interesting. As I said previously, hash-maps usually co
 > // For example, this may be used as StripedMap<spinlock_t> <br/>
 > // or as StripedMap<SomeStruct> where SomeStruct stores a spin lock.
 
-**For curious:** if you take a look at the earlier versions of Objective-C source code you will see no StripedMap. Most probably that this striping performance optimization was included for actuall necessity. SideTable uses synchronization which become a bottle neck in programming language with reference counting.
+**Notice:** if you take a look at the earlier versions of Objective-C source code you will see no StripedMap. Most probably that this striping performance optimization was included for actuall necessity. SideTable uses synchronization which become a bottle neck in programming language with reference counting.
 
 **References:**
 
