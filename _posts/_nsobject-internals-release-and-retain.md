@@ -41,15 +41,36 @@ id objc_object::sidetable_retain()
 
 Actually, if we skip some implementation details such as what is `SideTable`, `refcnts`, `SIDE_TABLE_RC_PINNED`, we'll see synchronized way to increase counter. So retain is the same as what is written in the documentation, just increasing counter by one. But we came here, not only to verify that, so let's try to look around and see what we can find.
 
-/// #TBD SIDE_TABLE_RC_PINNED
+Interesting synchronization approach is applied in this function. Initially `sidetable_retain` uses "fast" way to increase counter via `.tryLock()` and if it's locked, then jump to `sidetable_retain_slow()`. But `sidetable_retain_slow` is almost the same. Key differences are that `sidetable_retain_slow` gets `table` as a parameter (versus direct call to SideTables in `sidetable_retain`) and uses `lock` instead of `tryLock`. I don't find clear reason for that, also as concrete answer in the source code. However I have one assumption that it could be an optimization trick. Some mutex implementations use thread scheduler that moves locked threads into sleep mode and wakes them up when unlock trigger fires (another option to wrap them into while loop and keep them runable). So may be in general case it's faster to use `trylock` first.
 
-Interesting point here is that initially `sidetable_retain` uses "fast" way to increase counter via `.tryLock()` and if it's locked, then jump to `sidetable_retain_slow()`. But `sidetable_retain_slow` is almost the same. Key differences are that `sidetable_retain_slow` gets `table` as a parameter (versus direct call to SideTables in `sidetable_retain`) and uses `lock` instead of `tryLock`. I don't find clear reason for that, also as concrete answer in the source code. However I have one assumption that it could be an optimization trick. Some mutex implementations use thread scheduler that moves locked threads into sleep mode and wakes them up when unlock trigger fires (another option to wrap them into while loop and keep them runable). So may be in general case it's faster to use `trylock` first.
+Let's move to the details and start with `SideTable`:
 
-**Notice:** I tried to perform some sort of simulation to get understanding via experiments with `pthread`. However, the only practical result I got is that in single-threaded mode `trylock` works slower than `lock`. Other multi-threaded simulations don't show the average case, but some edge cases and each result is different from previous.
+```c++
+struct SideTable {
+    spinlock_t slock;
+    RefcountMap refcnts;
+    weak_table_t weak_table;
 
-Let's move to the details, and start with SideTable 
+    // ...
 
-#TBD SideTable class
+    void lock() { slock.lock(); }
+    void unlock() { slock.unlock(); }
+    bool trylock() { return slock.trylock(); }
+
+    // ...
+};
+```
+
+SideTable contains three parts:
+
+- `spinlock_t slock;` and related synchronization functions. This is the most clear part of the struct helps to synchronize access to the `RefcountMap refcnts;`
+- `RefcountMap refcnts;`. If we try to flaten this declaration, we will see that `RefcountMap` is an alias for `DenseMap`, which uses pointer to the `objc_object` as a key and `size_t` as a value. What does it remind? Correct, it reminds the simplified version of the Reference Counting implementation. And sinse `DenseMap` class is a part of the LLVM source code,  we have quick way to get understanding what is it using LLVM docs:
+
+> `DenseMap` is a simple quadratically probed hash table. It excels at supporting small keys and values: it uses a single allocation to hold all of the pairs that are currently inserted in the map. `DenseMap` is a great way to map pointers to pointers, or map other small types to each other.
+>
+> *LLVM Programmer’s Manual*
+
+- `weak_table_t weak_table;`
 
 Actual storage of SideTable is placed in the static `unsigned char *` pointer called `SideTableBuf` with a proper size capable to fit `StripedMap<SideTable>`.
 
@@ -132,7 +153,7 @@ class StripedMap {
 
 Right shift (`>>`) and xor (`^`) operators can be executed as a few instructions on the most of the modern CPUs, and the modulus operator (`%`) also rather trivial. It means that this expression is calculated pretty fast. To get some overview of the statistical distribution, I used naive simulation to see how pseudo hashes are distributed over the array. 
 
-I have created ordinary for loop and used malloc to create new unique pointer, and passed this pointer address as input parameter to pseudo-hash function. (Important point here to not free these memory, because you OS will re-use freed memory and you'll get the same value multiple times.). I varied parameters such as pointer values count (amount of iterations), different chunk sizes for allocations. In all cases distribution was close to the discrete uniform distribution (equal or almost equal amount of matches on all positions). Consequently, we can think about this pseudo-hash as a hash function.
+I have created ordinary for loop and used malloc to create new unique pointer, and passed this pointer address as input parameter to pseudo-hash function. (Important point here to not free these memory, because your OS will re-use freed memory and you'll get the same value multiple times.). I varied parameters such as pointer values count (amount of iterations), different chunk sizes for allocations. In all cases distribution was close to the discrete uniform distribution (equal or almost equal amount of matches on all positions). Consequently, we can think about this pseudo-hash as a hash function.
 
 Second point is the most interesting. As I said previously, hash-maps usually contains mechanism for handling conflicts during filling value for key and keeping data structure able to return value for key later. `StripedMap` is a different thing. It is an internal storage implemented as an statically-defined array. That means that internal storage will be allocated and filled at the end of StripeMap creation. Also it's clear that this is read-only data structure, developer can only get value by key using overloaded operators in `public:` class interface section. So if we collect these facts and keep in mind word `striping`, it's become clear what this class actually does. It splits access to certain recources based on the pointer. Resources are counted as equal, so the main goal to have stable repeatable access to the same resources each time (no matter what exactly this resource will be, the main thing that it's the same). This info was partially described in the comment in source code:
 
@@ -145,5 +166,6 @@ Second point is the most interesting. As I said previously, hash-maps usually co
 
 **References:**
 
+- [DenseMap description on LLVM Docs](http://llvm.org/docs/ProgrammersManual.html#llvm-adt-densemap-h)
 - [Reference for `alignas`](http://en.cppreference.com/w/cpp/language/alignas)
 - [Reference page for `new`](http://en.cppreference.com/w/cpp/language/new)
