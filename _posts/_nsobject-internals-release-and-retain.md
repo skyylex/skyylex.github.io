@@ -43,6 +43,38 @@ Actually, if we skip some implementation details such as what is `SideTable`, `r
 
 Interesting synchronization approach is applied in this function. Initially `sidetable_retain` uses "fast" way to increase counter via `.tryLock()` and if it's locked, then jump to `sidetable_retain_slow()`. But `sidetable_retain_slow` is almost the same. Key differences are that `sidetable_retain_slow` gets `table` as a parameter (versus direct call to SideTables in `sidetable_retain`) and uses `lock` instead of `tryLock`. I don't find clear reason for that, also as concrete answer in the source code. However I have one assumption that it could be an optimization trick. Some mutex implementations use thread scheduler that moves locked threads into sleep mode and wakes them up when unlock trigger fires (another option to wrap them into while loop and keep them runable). So may be in general case it's faster to use `trylock` first.
 
+```c++
+uintptr_t objc_object::sidetable_release(bool performDealloc)
+{
+    // ..
+    SideTable& table = SideTables()[this];
+
+    bool do_dealloc = false;
+
+    if (table.trylock()) {
+        RefcountMap::iterator it = table.refcnts.find(this);
+        // ..
+        if (it->second < SIDE_TABLE_DEALLOCATING) {
+            // ..
+            do_dealloc = true;
+            it->second |= SIDE_TABLE_DEALLOCATING;
+        } else {
+            // ..
+            it->second -= SIDE_TABLE_RC_ONE;
+        }
+        table.unlock();
+        if (do_dealloc  &&  performDealloc) {
+            ((void(*)(objc_object *, SEL))objc_msgSend)(this, SEL_dealloc);
+        }
+        return do_dealloc;
+    }
+
+    return sidetable_release_slow(table, performDealloc);
+}
+```
+
+`sidetable_release` uses the same approach for synchronization: `tryLock` first and if it fails - use `lock` and wait for a chance to use `RefcountMap`. There are several constants: `SIDE_TABLE_RC_ONE` (0x100) and `SIDE_TABLE_DEALLOCATING` (0x10), and few others. `SIDE_TABLE_RC_ONE` is a value used as to change reference counter by 1. `SIDE_TABLE_DEALLOCATING` is used to mark object for deallocating. Interesting point here, that 2 different goals are achieved inside integer value. There is a counter that starts counting from the 3rd bit and there are low indicator bits which are used for marking. This bits manipulation has no conflicts because bits ranges are independent to each other.
+
 Let's move to the details and start with `SideTable`:
 
 ```c++
@@ -70,7 +102,7 @@ SideTable contains three parts:
 >
 > *LLVM Programmer’s Manual*
 
-- `weak_table_t weak_table;`
+- `weak_table_t weak_table;` - weak references table. Keeps tracking of the referrers as `objc_object **` and pointer to the object `objc_object`, called as referent.
 
 Actual storage of SideTable is placed in the static `unsigned char *` pointer called `SideTableBuf` with a proper size capable to fit `StripedMap<SideTable>`.
 
@@ -163,6 +195,12 @@ Second point is the most interesting. As I said previously, hash-maps usually co
 > // or as StripedMap<SomeStruct> where SomeStruct stores a spin lock.
 
 **Notice:** if you take a look at the earlier versions of Objective-C source code you will see no StripedMap. Most probably that this striping performance optimization was included for actuall necessity. SideTable uses synchronization which become a bottle neck in programming language with reference counting.
+
+**Summary:**
+
+Reference counting is the core of the memory management in Objective-C. However, I think it's not just a theoretical interest. Such critical to performance topics often provide a lot of interesting techniques and approaches. And today we've found few of them. (Unfortunately, it's not always easy to understand the real reasons of using them). So I think such source code examination is not just fun, but also can improve your range of vision as a programmer.
+
+Thanks for reading!
 
 **References:**
 
