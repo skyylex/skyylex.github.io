@@ -210,6 +210,6 @@ Thanks for reading!
 
 **References:**
 
-- [DenseMap description on LLVM Docs](http://llvm.org/docs/ProgrammersManual.html#llvm-adt-densemap-h)
+- [`DenseMap` description on LLVM Docs](http://llvm.org/docs/ProgrammersManual.html#llvm-adt-densemap-h)
 - [Reference for `alignas`](http://en.cppreference.com/w/cpp/language/alignas)
 - [Reference page for `new`](http://en.cppreference.com/w/cpp/language/new)
