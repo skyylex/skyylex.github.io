@@ -1,3 +1,9 @@
+---
+layout: default
+title: NSObject Internals. Episode 4 - retain and release
+---
+**NSObject Internals. Episode 4 - `retain` and `release`**
+
 **Introduction**
 
 Today is the 4th episode of NSObject Internals and we'll touch `retain` and `release`. [Previous episode](https://skyylex.github.io/nsobject-internals-autorelease_and_autoreleasepool) has already described some of the reference counting specifics, so to not repeat myself I will immediately jump into the details.
