@@ -204,7 +204,7 @@ Second point is the most interesting. As I said previously, hash-maps usually co
 
 **Summary:**
 
-Reference counting is the core of the memory management in Objective-C. However, I think it's not just a theoretical interest. Such critical to performance topics often provide a lot of interesting techniques and approaches. And today we've found few of them. (Unfortunately, it's not always easy to understand the real reasons of using them). So I think such source code examination is not just fun, but also development for your range of vision as a programmer.
+Reference counting is the core of the memory management in Objective-C. However, I think it's not just a theoretical interest. Such critical to performance topics often provide a lot of interesting techniques and approaches. And today we've found few of them. (Unfortunately, it's not always easy to understand what was the reason to use them). So I think such source code examination is not just fun, but also development for your range of vision as a programmer.
 
 Thanks for reading!
 
