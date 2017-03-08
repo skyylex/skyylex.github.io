@@ -20,13 +20,13 @@ As usual let's see what is hidden inside `retain` by examination of the possible
         - `// ... something about tagged pointers`
         - `id objc_object::sidetable_retain()`
         
-Here I should stop. We have already met with `objc_object`, not personally. Anyway, it's what lies behind black-boxed `id` struct.
+`objc_object` is a private `struct` used under the hood of `NSObject`.
 
 ```c++
 typedef struct objc_object *id;
 ```
 
-But today is not `objc_object` day, it's interesting topic deserves a separate post and we'll cover it one day. Go back to the `retain`, its core implementation lies in the `sideTable_retain()` method:
+But today is not `objc_object` day, this interesting topic deserves a separate post and we'll cover it one day. Go back to the `retain`, its core implementation lies in the `sideTable_retain()` method:
 
 ```c++
 id objc_object::sidetable_retain()
