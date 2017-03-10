@@ -28,7 +28,7 @@ And the next target of the journey is `os_lock_handoff_s`. What we can say about
 
 - https://github.com/samdmarshall/OSXPrivateSDK/blob/master/PrivateSDK10.10.sparse.sdk/usr/local/include/os/lock_private.h
 
-Private header means that we most probably can not rely on getting some information from the official sources. 
+Private header means that we most probably can not rely on getting some information from the official sources. Ok, if we cannot get sources and more or less oficial documentation let's take a look at reverse engineering tools. I'll start from the most obvious way. We know that `retain` and `release` is a part of the `Objective-C` language, more explicitly it's part of the `NSObject` implementation. And `NSObject` is one of the root classes in the `Foundation` framework.
 
 /usr/lib/system/libsystem_platform.dylib
 
