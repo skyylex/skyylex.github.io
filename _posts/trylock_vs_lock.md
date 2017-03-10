@@ -13,7 +13,7 @@ compare + exchange + lock (atomic operation)
 
 ==================================================
 
-
+```
 int __os_lock_handoff_lock_slow(int arg0) {
     r15 = arg0 + 0x8;
     rbx = 0x4;
@@ -46,6 +46,7 @@ loc_294d:
     r12 = r12 + ((rbx == 0x5 ? 0x1 : 0x0) & 0xff);
     r13 = r13 + 0x1;
 }
+```
 
 **thread_switch**
 
@@ -63,11 +64,14 @@ thread_switch
 osfmk/kern/syscall_subr.c
 Force context switch of current thread. Allows for handoff (specifying the next thread hint)
 
-http://web.mit.edu/darwin/src/modules/xnu/osfmk/man/thread_switch.html
-
 0x100003d - seems like list of syscals is defined from 0x1000000
 Anyway, "3D" in hex is equal 61 
 
 thread_switch usage
 
-https://opensource.apple.com/source/xnu/xnu-1504.9.26/osfmk/kern/syscall_subr.c
+
+**References:**
+
+- http://x86.renejeschke.de/html/file_module_x86_id_41.html
+- https://opensource.apple.com/source/xnu/xnu-1504.9.26/osfmk/kern/syscall_subr.c
+- http://web.mit.edu/darwin/src/modules/xnu/osfmk/man/thread_switch.html
