@@ -1,3 +1,35 @@
+**Introduction**
+
+In previous post about retain and release I have found that synchronized access to the reference counters is built over the lock which uses `tryLock` function first. And if `tryLock` doesn't lock then "slow" path is used with `lock` function. However, I didn't have any concrete information about why `lock` is slower than `tryLock`. So in this post I will try to find and explain why.
+
+**Analysis**
+
+Our start point is defined like this:
+
+- `spinlock_t slock;`
+
+The declaration of the `spinlock_t` is the following:
+
+```c++
+class spinlock_t {
+    os_lock_handoff_s mLock;
+ public:
+    spinlock_t() : mLock(OS_LOCK_HANDOFF_INIT) { }
+    
+    void lock() { os_lock_lock(&mLock); }
+    void unlock() { os_lock_unlock(&mLock); }
+    bool trylock() { return os_lock_trylock(&mLock); }
+    
+    // ...
+}
+```
+
+And the next target of the journey is `os_lock_handoff_s`. What we can say about this type? Quick search in the Internet says that this type is defined in the system private header `lock_private.h`.
+
+- https://github.com/samdmarshall/OSXPrivateSDK/blob/master/PrivateSDK10.10.sparse.sdk/usr/local/include/os/lock_private.h
+
+Private header means that we most probably can not rely on getting some information from the official sources. 
+
 /usr/lib/system/libsystem_platform.dylib
 
 __os_lock_handoff_trylock:
@@ -70,8 +102,12 @@ Anyway, "3D" in hex is equal 61
 thread_switch usage
 
 
+
+
 **References:**
 
+- https://skyylex.github.io/NSObject_internals_-retain_and_release
 - http://x86.renejeschke.de/html/file_module_x86_id_41.html
 - https://opensource.apple.com/source/xnu/xnu-1504.9.26/osfmk/kern/syscall_subr.c
 - http://web.mit.edu/darwin/src/modules/xnu/osfmk/man/thread_switch.html
+- https://lists.swift.org/pipermail/swift-dev/Week-of-Mon-20151214/000389.html
