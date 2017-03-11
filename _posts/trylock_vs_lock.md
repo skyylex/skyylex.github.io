@@ -45,52 +45,68 @@ I will use binary for iPhoneSimulator platform, and `nm` for initial symbol sear
 
 We found `_os_lock_lock` and it's located in the library *libSystem*. Each binary contain list of the required dependencies which we can find using `otool`:
 
-`otool -L Foundation | grep "libSystem"`
+```bash
+otool -L Foundation | grep "libSystem"
+```
 
 > /usr/lib/libSystem.dylib (compatibility version 1.0.0, current version 1238.0.0)
 
 Exactly what we need, then let's try to find this symbol in the discovered dylib using provided path.
 
-`nm /usr/lib/libSystem.dylib -m | grep "os_lock_lock"` and we get empty result. `libSystem` refers a lot of libraries inside, and most probably provide simplified access for importing core functionality.
+```bash
+nm /usr/lib/libSystem.dylib -m | grep "os_lock_lock"
+``` 
 
-`otool -L /usr/lib/libSystem.dylib`
+and we get empty result. `libSystem` refers a lot of libraries inside, and most probably provide simplified access for importing core functionality.
+
+```bash
+otool -L /usr/lib/libSystem.dylib
+```
 
 > /usr/lib/libSystem.dylib:
->	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1238.0.0)
->	/usr/lib/system/libcache.dylib (compatibility version 1.0.0, current version 79.0.0)
+>	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1238.0.0) <br>
+>	/usr/lib/system/libcache.dylib (compatibility version 1.0.0, current version 79.0.0) <br>
 >	/usr/lib/system/libcommonCrypto.dylib (compatibility version 1.0.0, current version 60092.30.2)
->	/usr/lib/system/libcompiler_rt.dylib (compatibility version 1.0.0, current version 62.0.0)
->	/usr/lib/system/libcopyfile.dylib (compatibility version 1.0.0, current version 1.0.0)
->	/usr/lib/system/libcorecrypto.dylib (compatibility version 1.0.0, current version 442.30.20)
->	/usr/lib/system/libdispatch.dylib (compatibility version 1.0.0, current version 703.30.5)
->	/usr/lib/system/libdyld.dylib (compatibility version 1.0.0, current version 421.2.0)
->	/usr/lib/system/libkeymgr.dylib (compatibility version 1.0.0, current version 28.0.0)
->	/usr/lib/system/liblaunch.dylib (compatibility version 1.0.0, current version 972.30.7)
->	/usr/lib/system/libmacho.dylib (compatibility version 1.0.0, current version 894.0.0)
->	/usr/lib/system/libquarantine.dylib (compatibility version 1.0.0, current version 85.0.0)
->	/usr/lib/system/libremovefile.dylib (compatibility version 1.0.0, current version 45.0.0)
->	/usr/lib/system/libsystem_asl.dylib (compatibility version 1.0.0, current version 349.30.2)
->	/usr/lib/system/libsystem_blocks.dylib (compatibility version 1.0.0, current version 67.0.0)
->	/usr/lib/system/libsystem_c.dylib (compatibility version 1.0.0, current version 1158.30.7)
->	/usr/lib/system/libsystem_configuration.dylib (compatibility version 1.0.0, current version 888.30.2)
->	/usr/lib/system/libsystem_coreservices.dylib (compatibility version 1.0.0, current version 41.4.0)
->	/usr/lib/system/libsystem_coretls.dylib (compatibility version 1.0.0, current version 121.31.1)
->	/usr/lib/system/libsystem_dnssd.dylib (compatibility version 1.0.0, current version 765.30.11)
->	/usr/lib/system/libsystem_info.dylib (compatibility version 1.0.0, current version 503.30.1)
->	/usr/lib/system/libsystem_kernel.dylib (compatibility version 1.0.0, current version 3789.41.3)
->	/usr/lib/system/libsystem_m.dylib (compatibility version 1.0.0, current version 3121.4.0)
->	/usr/lib/system/libsystem_malloc.dylib (compatibility version 1.0.0, current version 116.30.3)
->	/usr/lib/system/libsystem_network.dylib (compatibility version 1.0.0, current version 1.0.0)
->	/usr/lib/system/libsystem_networkextension.dylib (compatibility version 1.0.0, current version 1.0.0)
->	/usr/lib/system/libsystem_notify.dylib (compatibility version 1.0.0, current version 165.20.1)
->	/usr/lib/system/libsystem_platform.dylib (compatibility version 1.0.0, current version 126.1.2)
->	/usr/lib/system/libsystem_pthread.dylib (compatibility version 1.0.0, current version 218.30.1)
->	/usr/lib/system/libsystem_sandbox.dylib (compatibility version 1.0.0, current version 592.31.1)
->	/usr/lib/system/libsystem_secinit.dylib (compatibility version 1.0.0, current version 24.0.0)
->	/usr/lib/system/libsystem_symptoms.dylib (compatibility version 1.0.0, current version 1.0.0)
->	/usr/lib/system/libsystem_trace.dylib (compatibility version 1.0.0, current version 518.30.7)
->	/usr/lib/system/libunwind.dylib (compatibility version 1.0.0, current version 35.3.0)
->	/usr/lib/system/libxpc.dylib (compatibility version 1.0.0, current version 972.30.7)
+>	/usr/lib/system/libcompiler_rt.dylib (compatibility version 1.0.0, current version 62.0.0) <br>
+>	/usr/lib/system/libcopyfile.dylib (compatibility version 1.0.0, current version 1.0.0) <br>
+>	/usr/lib/system/libcorecrypto.dylib (compatibility version 1.0.0, current version 442.30.20) <br> 
+>	/usr/lib/system/libdispatch.dylib (compatibility version 1.0.0, current version 703.30.5) <br>
+>	/usr/lib/system/libdyld.dylib (compatibility version 1.0.0, current version 421.2.0) <br>
+>	/usr/lib/system/libkeymgr.dylib (compatibility version 1.0.0, current version 28.0.0) <br>
+>	/usr/lib/system/liblaunch.dylib (compatibility version 1.0.0, current version 972.30.7) <br>
+>	/usr/lib/system/libmacho.dylib (compatibility version 1.0.0, current version 894.0.0) <br>
+>	/usr/lib/system/libquarantine.dylib (compatibility version 1.0.0, current version 85.0.0) <br>
+>	/usr/lib/system/libremovefile.dylib (compatibility version 1.0.0, current version 45.0.0) <br>
+>	/usr/lib/system/libsystem_asl.dylib (compatibility version 1.0.0, current version 349.30.2) <br>
+>	/usr/lib/system/libsystem_blocks.dylib (compatibility version 1.0.0, current version 67.0.0) <br>
+>	/usr/lib/system/libsystem_c.dylib (compatibility version 1.0.0, current version 1158.30.7) <br>
+>	/usr/lib/system/libsystem_configuration.dylib (compatibility version 1.0.0, current version 888.30.2) <br>
+>	/usr/lib/system/libsystem_coreservices.dylib (compatibility version 1.0.0, current version 41.4.0) <br>
+>	/usr/lib/system/libsystem_coretls.dylib (compatibility version 1.0.0, current version 121.31.1) <br>
+>	/usr/lib/system/libsystem_dnssd.dylib (compatibility version 1.0.0, current version 765.30.11) <br>
+>	/usr/lib/system/libsystem_info.dylib (compatibility version 1.0.0, current version 503.30.1) <br>
+>	/usr/lib/system/libsystem_kernel.dylib (compatibility version 1.0.0, current version 3789.41.3) <br>
+>	/usr/lib/system/libsystem_m.dylib (compatibility version 1.0.0, current version 3121.4.0) <br>
+>	/usr/lib/system/libsystem_malloc.dylib (compatibility version 1.0.0, current version 116.30.3) <br>
+>	/usr/lib/system/libsystem_network.dylib (compatibility version 1.0.0, current version 1.0.0) <br>
+>	/usr/lib/system/libsystem_networkextension.dylib (compatibility version 1.0.0, current version 1.0.0) <br>
+>	/usr/lib/system/libsystem_notify.dylib (compatibility version 1.0.0, current version 165.20.1) <br>
+>	/usr/lib/system/libsystem_platform.dylib (compatibility version 1.0.0, current version 126.1.2) <br>
+>	/usr/lib/system/libsystem_pthread.dylib (compatibility version 1.0.0, current version 218.30.1) <br>
+>	/usr/lib/system/libsystem_sandbox.dylib (compatibility version 1.0.0, current version 592.31.1) <br>
+>	/usr/lib/system/libsystem_secinit.dylib (compatibility version 1.0.0, current version 24.0.0) <br>
+>	/usr/lib/system/libsystem_symptoms.dylib (compatibility version 1.0.0, current version 1.0.0) <br>
+>   /usr/lib/system/libsystem_trace.dylib (compatibility version 1.0.0, current version 518.30.7) <br>
+>   /usr/lib/system/libunwind.dylib (compatibility version 1.0.0, current version 35.3.0) <br>
+>   /usr/lib/system/libxpc.dylib (compatibility version 1.0.0, current version 972.30.7) <br>
+
+Using simple enumeration we can find out that `/usr/lib/system/libsystem_platform.dylib` is our next stop.
+
+```bash
+nm /usr/lib/system/libsystem_platform.dylib -m | grep "os_lock_lock"
+```
+
+> 00000000000022c4 (__TEXT,__text) external _os_lock_lock
 
 ```
 ; Segment External Symbols
