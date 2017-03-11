@@ -37,13 +37,21 @@ Private header means that described functionality isn't supposed to be used by d
 
 **Notice:** current post is written entirely based on Xcode Version 8.2.1 (8C1002) and macOS Sierra.
 
-I will use binary for iPhoneSimulator platform, and `nm` for initial symbol search:
+I will use binary for iPhoneSimulator platform, and `nm` for initial symbol search.
 
-`nm Foundation -m | grep "os_lock_lock"`, - where Foundation is a binary which is located at Foundation.framework/Foundation. Output will be the following:
+`nm Foundation -m | grep "os_lock_lock"`, - where Foundation is a binary which is located at Foundation.framework/Foundation. The output will be the following:
 
 > (undefined) external _os_lock_lock (from libSystem)
 
+We found `_os_lock_lock` and it's located in the library *libSystem*. Each binary contain list of the required dependencies which we can find using `otool`:
 
+`otool -L Foundation | grep "libSystem"`
+
+> /usr/lib/libSystem.dylib (compatibility version 1.0.0, current version 1238.0.0)
+
+Exactly what we need, then let's try to find this symbol in the discovered dylib using provided path.
+
+`nm /usr/lib/libSystem.dylib -m | grep "os_lock_lock"` and we get empty result.
 
 
 ```
