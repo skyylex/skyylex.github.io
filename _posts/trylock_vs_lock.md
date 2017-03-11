@@ -24,17 +24,34 @@ class spinlock_t {
 }
 ```
 
-So the next target of the journey is `os_lock_handoff_s`. What we can say about this type? Quick search in the Internet says that this type is defined in the system private header `lock_private.h`. This is most probably true, because that header is included in the `NSOject.m`:
+So the next target of the journey is `os_lock_handoff_s`, `os_lock_lock` and `os_lock_unlock`. What we can say about `os_lock_handoff_s`? Quick search in the Internet says that this type is defined in the system private header `lock_private.h`. This is most probably true, because that header is included in the `NSOject.m`:
 
 ```c++
 #   include <os/lock_private.h>
 ```
 
-Private header means that functionality described isn't supposed to be used by developers, also that this types aren't covered in the documentation from the official sources. Ok, if we cannot get sources and more or less oficial documentation let's take a look at reverse engineering tools. I'll start from the most obvious way. We know that `retain` and `release` is a part of the `Objective-C` language, more explicitly it's part of the `NSObject` implementation. And `NSObject` is one of the root classes in the `Foundation` framework. Each platform has it's own build of `Foundation`:
+Private header means that described functionality isn't supposed to be used by developers, also that these types aren't covered in the documentation from the official sources. Ok, if we cannot get sources and more or less oficial documentation let's take a look at reverse engineering tools. I'll start from the most obvious way. We know that `retain` and `release` is a part of the `Objective-C` language, more explicitly it's part of the `NSObject` implementation. And `NSObject` is one of the root classes in the `Foundation` framework. Each platform has it's own build of `Foundation`:
 
 - /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework 
 - /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/Foundation.framework
 
+**Notice:** current post is written entirely based on Xcode Version 8.2.1 (8C1002) and macOS Sierra.
+
+I will use binary for iPhoneSimulator platform, and `nm` for initial symbol search:
+
+`nm Foundation -m | grep "os_lock_lock"`, - where Foundation is a binary which is located at Foundation.framework/Foundation. Output will be the following:
+
+> (undefined) external _os_lock_lock (from libSystem)
+
+
+
+
+```
+; Segment External Symbols
+; Range: [0x53b000; 0x53e3b8[ (13240 bytes)
+```
+
+- ; in /usr/lib/libSystem.dylib
 
 /usr/lib/system/libsystem_platform.dylib
 
