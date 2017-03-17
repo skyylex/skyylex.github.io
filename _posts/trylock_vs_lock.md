@@ -108,10 +108,36 @@ nm /usr/lib/system/libsystem_platform.dylib -m | grep "os_lock_lock"
 
 > 00000000000022c4 (__TEXT,__text) external _os_lock_lock
 
+That means that `libsystem_platform.dylib` contains `_os_lock_lock` string in the symbol table. So we can try to disassemble it.
+
+```bash
+objdump -macho -disassemble libsystem_platform.dylib > libsystem_platform_disasm.out
 ```
-; Segment External Symbols
-; Range: [0x53b000; 0x53e3b8[ (13240 bytes)
+
+I stored whole output into the file hoping to work closely with the other symbol strings. But the result which I saw was a surprise for me. Output file was about 8k lines and I used search to find `_os_lock_lock`. And found this:
+
+```asm
+_os_lock_lock:
+    22c4:	48 8b 07 	movq	(%rdi), %rax
+    22c7:	ff 60 08 	jmpq	*8(%rax)
 ```
+
+Yes, it is only 2 line of asm code and it definitely isn't a full implementation of lock. What can we get from this code? The first thing I should check is what syntax type is used in the code. Nowadays we have AT&T and Intel syntaxes and to determine syntax type, I should look at the presence of "%" prefix on registers, if registers have it - you have AT&T syntax. Why it's important? Because each syntax type has it's own order of the source and destination register. In our case it's AT&T and this type use initial operand as source.
+
+This following line could be read as move quad word from address stored in `%rdi` and save it to `%rax`
+
+```asm
+movq (%rdi), %rax
+```
+
+Using ABI for x86_64 we could find that %rdi is used to pass 1st argument to function. Recalling usage of the lock function in the Objective-C source code confirms that point:
+
+`os_lock_lock(&mLock);`
+
+so `%rdi` contains actual allocated lock data, which is refered by `os_lock_handoff_s` pointer.
+
+
+
 
 - ; in /usr/lib/libSystem.dylib
 
@@ -196,3 +222,5 @@ thread_switch usage
 - https://opensource.apple.com/source/xnu/xnu-1504.9.26/osfmk/kern/syscall_subr.c
 - http://web.mit.edu/darwin/src/modules/xnu/osfmk/man/thread_switch.html
 - https://lists.swift.org/pipermail/swift-dev/Week-of-Mon-20151214/000389.html
+- https://www3.nd.edu/~dthain/courses/cse40243/fall2015/intel-intro.html
+- https://github.com/hjl-tools/x86-psABI/wiki/X86-psABI
