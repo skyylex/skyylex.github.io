@@ -111,7 +111,7 @@ nm /usr/lib/system/libsystem_platform.dylib -m | grep "os_lock_lock"
 That means that `libsystem_platform.dylib` contains `_os_lock_lock` string in the symbol table. So we can try to disassemble it.
 
 ```bash
-objdump -macho -disassemble libsystem_platform.dylib > libsystem_platform_disasm.out
+objdump -macho -disassemble /usr/lib/system//libsystem_platform.dylib > libsystem_platform_disasm.out
 ```
 
 I stored whole output into the file hoping to work closely with the other symbol strings. But the result which I saw was a surprise for me. Output file was about 8k lines and I used search to find `_os_lock_lock`. And found this:
@@ -138,32 +138,62 @@ so `%rdi` contains actual allocated lock data, which is refered by `os_lock_hand
 
 The next line describes that current execution should transfered to another point via jump to specific address calculated in expression `*8(%rax)`. There are two parts in the expression, first part it's a calculated value using so-called `base-relative` address mode, so `8(%rax)` could be read as value at the memory location eight bytes above the address indicated by `%rax`. We know that `rax` contains actual lock data. Combining these two facts together, we can assume that lock is a kind of struct which contains lock function. Unfortunately, that's all we have to say. Search for `os_lock_handoff_s` doesn't produce any result. The only more or less similar type which I've found was:
 
+```bash
+nm -m /usr/lib/system//libsystem_platform.dylib | grep "handoff"
+```
+
 > 0000000000009210 (__DATA,__const) external __os_lock_type_handoff
 
-but still these stored values have no meaning for our investigation. 
+but still these stored values have no meaning for our investigation, because we don't know how to decode them. 
+
+```bash
+otool -dV -s __DATA __const /usr/lib/system//libsystem_platform.dylib
+```
 
 > 0000000000009210	73 79 00 00 00 00 00 00 9d 25 00 00 00 00 00 00 
 > 0000000000009220	09 29 00 00 00 00 00 00 b4 25 00 00 00 00 00 00
 
+So, currently, we have no explicit calls of the lock function. But, for example, we can assume that such lock function should be somewhere in this library or other loaded libraries.
+
+I've started with "lock" searching and got 73 result, so probably it isn't efficient way to guess. After that I found that "lock" word is used not only as a main part of a function name, but also as a prefix. So probably, `tryLock` may be better:
+
+``` 
+nm -m /usr/lib/system//libsystem_platform.dylib | grep "trylock"
+```
+
+> 0000000000005a2f (__TEXT,__text) non-external (was a private external) __os_lock_eliding_trylock
+> 0000000000002909 (__TEXT,__text) non-external (was a private external) __os_lock_handoff_trylock
+> 0000000000005924 (__TEXT,__text) non-external (was a private external) __os_lock_nospin_trylock
+> 0000000000005388 (__TEXT,__text) non-external (was a private external) __os_lock_spin_trylock
+> 0000000000005dee (__TEXT,__text) non-external (was a private external) __os_lock_transactional_trylock
+> 0000000000005aed (__TEXT,__text) non-external (was a private external) __os_lock_transactional_trylock$VARIANT$rtm
+> 0000000000005aea (__TEXT,__text) non-external __os_lock_transactional_trylock_abort
+> 000000000000576f (__TEXT,__text) non-external (was a private external) __os_lock_unfair_trylock
+> 000000000000586d (__TEXT,__text) external __os_nospin_lock_trylock
+> 0000000000002903 (__TEXT,__text) external _os_lock_trylock
+> 00000000000054b2 (__TEXT,__text) external _os_unfair_lock_trylock
+
+Here we see multiple versions of the try lock and the most compatible by name is `__os_lock_handoff_trylock`.
+
+```asm
+__os_lock_handoff_trylock:
+    2909:   movl %gs:24, %ecx 
+    2911:	xorl %eax, %eax
+    2913:	lock
+    2914:	cmpxchgl %ecx, 8(%rdi)
+    2918:	sete %al
+    291b:	retq
+```
+
 Potentially, it could be the end of the post without any result. But there was one mistake I made at the beginnning.
 
+My macbook has macOS Sierra 10.12.3 (16D32) and if you take a look at the https://opensource.apple.com you will find that related version of the Objective-C is *objc4-706*. The most interesting fact, that version 706 contains a little bit different implementation: 
 
-- ; in /usr/lib/libSystem.dylib
+``` C++
+os_unfair_lock mLock;
+```
 
-/usr/lib/system/libsystem_platform.dylib
-
-__os_lock_handoff_trylock:
-
-0000000000002909         mov        ecx, dword [gs:0x18]
-0000000000002911         xor        eax, eax
-0000000000002913         lock cmpxchg dword [rdi+8], ecx
-0000000000002918         sete       al
-000000000000291b         ret
-                        ; endp
-
-compare + exchange + lock (atomic operation)
-
-==================================================
+Fortunately, this type is listed in the official docs - https://developer.apple.com/reference/os/os_unfair_lock. That means that we can use it in our source code and examining disassembly code.
 
 ```
 int __os_lock_handoff_lock_slow(int arg0) {
