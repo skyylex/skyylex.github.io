@@ -136,7 +136,16 @@ Using ABI for x86_64 we could find that %rdi is used to pass 1st argument to fun
 
 so `%rdi` contains actual allocated lock data, which is refered by `os_lock_handoff_s` pointer.
 
+The next line describes that current execution should transfered to another point via jump to specific address calculated in expression `*8(%rax)`. There are two parts in the expression, first part it's a calculated value using so-called `base-relative` address mode, so `8(%rax)` could be read as value at the memory location eight bytes above the address indicated by `%rax`. We know that `rax` contains actual lock data. Combining these two facts together, we can assume that lock is a kind of struct which contains lock function. Unfortunately, that's all we have to say. Search for `os_lock_handoff_s` doesn't produce any result. The only more or less similar type which I've found was:
 
+> 0000000000009210 (__DATA,__const) external __os_lock_type_handoff
+
+but still these stored values have no meaning for our investigation. 
+
+> 0000000000009210	73 79 00 00 00 00 00 00 9d 25 00 00 00 00 00 00 
+> 0000000000009220	09 29 00 00 00 00 00 00 b4 25 00 00 00 00 00 00
+
+Potentially, it could be the end of the post without any result. But there was one mistake I made at the beginnning.
 
 
 - ; in /usr/lib/libSystem.dylib
@@ -212,9 +221,6 @@ Anyway, "3D" in hex is equal 61
 
 thread_switch usage
 
-
-
-
 **References:**
 
 - https://skyylex.github.io/NSObject_internals_-retain_and_release
@@ -224,3 +230,4 @@ thread_switch usage
 - https://lists.swift.org/pipermail/swift-dev/Week-of-Mon-20151214/000389.html
 - https://www3.nd.edu/~dthain/courses/cse40243/fall2015/intel-intro.html
 - https://github.com/hjl-tools/x86-psABI/wiki/X86-psABI
+- http://csiflabs.cs.ucdavis.edu/~ssdavis/50/att-syntax.htm
