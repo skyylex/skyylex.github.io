@@ -184,30 +184,91 @@ __os_lock_handoff_trylock:
     2918:	sete %al
     291b:	retq
 ```
+Key operation in the code above is `lock cmpxchgl`, this instruction compares operands and load one of the operand in destination or in the %eax register. `lock` attribute provide atomic behaviour.
 
-Potentially, it could be the end of the post without any result. But there was one mistake I made at the beginnning.
+Almost the same implementation in the `__os_lock_handoff_lock`. The difference of this code is in the additional logic. If `cmpxchgl` isn't able to load into `%rdi`, conditional jump to 0x25af will be performed (`jne 0x25af`). So we move to the `__os_lock_handoff_lock_slow` label.
 
-My macbook has macOS Sierra 10.12.3 (16D32) and if you take a look at the https://opensource.apple.com you will find that related version of the Objective-C is *objc4-706*. The most interesting fact, that version 706 contains a little bit different implementation: 
-
-``` C++
-os_unfair_lock mLock;
+```asm
+__os_lock_handoff_lock:
+000000000000259d	movl	%gs:0x18, %ecx
+00000000000025a5	xorl	%eax, %eax
+00000000000025a7	lock
+00000000000025a8	cmpxchgl	%ecx, 0x8(%rdi)
+00000000000025ac	jne	0x25af
+00000000000025ae	retq
+00000000000025af	jmp	__os_lock_handoff_lock_slow
 ```
 
-Fortunately, this type is listed in the official docs - https://developer.apple.com/reference/os/os_unfair_lock. That means that we can use it in our source code and examining disassembly code.
+So we move to the `__os_lock_handoff_lock_slow` label.
 
+```asm
+__os_lock_handoff_lock_slow:
+000000000000291c	pushq	%rbp
+000000000000291d	movq	%rsp, %rbp
+0000000000002920	pushq	%r15
+0000000000002922	pushq	%r14
+0000000000002924	pushq	%r13
+0000000000002926	pushq	%r12
+0000000000002928	pushq	%rbx
+0000000000002929	pushq	%rax
+000000000000292a	movq	%rdi, %r15
+000000000000292d	movl	%gs:0x18, %r14d
+0000000000002936	addq	$0x8, %r15
+000000000000293a	movl	$0x4, %ebx
+000000000000293f	movl	$0x1, %r12d
+0000000000002945	movl	$0xffffff9c, %r13d
+000000000000294b	jmp	0x2973
+000000000000294d	testl	%r13d, %r13d
+0000000000002950	movl	$0x5, %ecx
+0000000000002955	cmovel	%ecx, %ebx
+0000000000002958	movl	%eax, %edi
+000000000000295a	movl	%ebx, %esi
+000000000000295c	movl	%r12d, %edx
+000000000000295f	callq	0x741a ## symbol stub for: _thread_switch
+0000000000002964	cmpl	$0x5, %ebx
+0000000000002967	sete	%al
+000000000000296a	movzbl	%al, %eax
+000000000000296d	addl	%eax, %r12d
+0000000000002970	incl	%r13d
+0000000000002973	movl	(%r15), %eax
+0000000000002976	testl	%eax, %eax
+0000000000002978	jne	0x2983
+000000000000297a	xorl	%eax, %eax
+000000000000297c	lock
+000000000000297d	cmpxchgl	%r14d, (%r15)
+0000000000002981	je	0x2990
+0000000000002983	cmpl	%r14d, %eax
+0000000000002986	jne	0x294d
+0000000000002988	movl	%r14d, %edi
+000000000000298b	callq	__os_lock_recursive_abort
+0000000000002990	addq	$0x8, %rsp
+0000000000002994	popq	%rbx
+0000000000002995	popq	%r12
+0000000000002997	popq	%r13
+0000000000002999	popq	%r14
+000000000000299b	popq	%r15
+000000000000299d	popq	%rbp
+000000000000299e	retq
+000000000000299f	nop
 ```
+
+As you see the disassembled code for slow path is quite difficult for reading. I'll use Hopper to disassemble again and convert to pseudo code.
+
+```c
 int __os_lock_handoff_lock_slow(int arg0) {
     r15 = arg0 + 0x8;
     rbx = 0x4;
     r12 = 0x1;
     r13 = 0xffffff9c;
+    goto loc_2973;
+
+loc_2973:
     rax = *(int32_t *)r15;
     if (rax != 0x0) goto loc_2983;
 
 loc_297a:
-    r14 = *(int32_t *)0x18;
     rax = 0x0;
-    *(int32_t *)r15 = lock intrinsic_cmpxchg(*(int32_t *)r15, r14);
+    *(int32_t *)r15 = lock intrinsic_cmpxchg(*(int32_t *)r15, *(int32_t *)0x18);
     if (*(int32_t *)r15 == 0x0) goto .l3;
 
 loc_2983:
@@ -227,22 +288,35 @@ loc_294d:
     thread_switch(rax, rbx, r12);
     r12 = r12 + ((rbx == 0x5 ? 0x1 : 0x0) & 0xff);
     r13 = r13 + 0x1;
+    goto loc_2973;
 }
 ```
 
+One of the interested for us flows is the next: `loc_2973` -> `loc_2983` -> `loc_294d` -> `thread_switch -> loc_2973`. Other flows defined either comparisons via cmpxchg or exit from this code
+
 **thread_switch**
 
+Thread switch is defined in the /usr/lib/system/libsystem_kernel.dylib:
 
-in /usr/lib/system/libsystem_kernel.dylib
-
+```asm
 _syscall_thread_switch:
 0000000000012488         mov        r10, rcx                                    ; CODE XREF=_thread_switch
 000000000001248b         mov        eax, 0x100003d
 0000000000012490         syscall
 0000000000012492         ret
+```
 
-61
-thread_switch
+It's clear that `thread_switch` is peformed via `syscall` and the most importand here is address 0x100003d. `thread_switch`
+function is declared in the XNU (hybrid core of the OS X). Usually syscalls are mapped in some kind of table, where each system call has it's own address. I assumed the same approach and converted 3d into decimal number 61. And after some search of the Internet found this table:
+
+> List of mach traps in xnu-792.6.22 <br/>
+> <br/>
+> /* 26 */    mach_reply_port <br/>
+/* 27 */    thread_self_trap <br/>
+> ... <br/>
+> /* 61 */    thread_switch <br/>
+> from http://radare.sourcearchive.com/documentation/1.4/osx-xnu-syscall_8h-source.html
+
 osfmk/kern/syscall_subr.c
 Force context switch of current thread. Allows for handoff (specifying the next thread hint)
 
@@ -250,6 +324,10 @@ Force context switch of current thread. Allows for handoff (specifying the next 
 Anyway, "3D" in hex is equal 61 
 
 thread_switch usage
+
+**Summary** 
+
+Based on some explicit and implicit methods and approaches we've found differences between `tryLock` and `lock` method, which make reasonable to use `tryLock` first. However, it seldom technique and I tends to think that `lock` implementation could be improved or it's not so useful nowadays. Actually, it seems that one of these guesses are true. I've checked the most recent source code of objc-706 and at the moment you will not find tryLock in the `retain` implementation, simple lock / unlock technique was used there. However `__os_lock_handoff_`-family isn't also used. Currently it's replaced by `os_unfair_lock` new lock available since macOS 10.12.
 
 **References:**
 
