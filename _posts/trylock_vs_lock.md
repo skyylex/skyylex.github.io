@@ -161,17 +161,17 @@ I've started with "lock" searching and got 73 result, so probably it isn't effic
 nm -m /usr/lib/system//libsystem_platform.dylib | grep "trylock"
 ```
 
-> 0000000000005a2f (__TEXT,__text) non-external (was a private external) __os_lock_eliding_trylock
-> 0000000000002909 (__TEXT,__text) non-external (was a private external) __os_lock_handoff_trylock
-> 0000000000005924 (__TEXT,__text) non-external (was a private external) __os_lock_nospin_trylock
-> 0000000000005388 (__TEXT,__text) non-external (was a private external) __os_lock_spin_trylock
-> 0000000000005dee (__TEXT,__text) non-external (was a private external) __os_lock_transactional_trylock
-> 0000000000005aed (__TEXT,__text) non-external (was a private external) __os_lock_transactional_trylock$VARIANT$rtm
-> 0000000000005aea (__TEXT,__text) non-external __os_lock_transactional_trylock_abort
-> 000000000000576f (__TEXT,__text) non-external (was a private external) __os_lock_unfair_trylock
-> 000000000000586d (__TEXT,__text) external __os_nospin_lock_trylock
-> 0000000000002903 (__TEXT,__text) external _os_lock_trylock
-> 00000000000054b2 (__TEXT,__text) external _os_unfair_lock_trylock
+> 0000000000005a2f (__TEXT,__text) non-external (was a private external) __os_lock_eliding_trylock <br>
+> 0000000000002909 (__TEXT,__text) non-external (was a private external) __os_lock_handoff_trylock <br>
+> 0000000000005924 (__TEXT,__text) non-external (was a private external) __os_lock_nospin_trylock <br>
+> 0000000000005388 (__TEXT,__text) non-external (was a private external) __os_lock_spin_trylock <br>
+> 0000000000005dee (__TEXT,__text) non-external (was a private external) __os_lock_transactional_trylock <br>
+> 0000000000005aed (__TEXT,__text) non-external (was a private external) __os_lock_transactional_trylock$VARIANT$rtm <br>
+> 0000000000005aea (__TEXT,__text) non-external __os_lock_transactional_trylock_abort <br>
+> 000000000000576f (__TEXT,__text) non-external (was a private external) __os_lock_unfair_trylock <br>
+> 000000000000586d (__TEXT,__text) external __os_nospin_lock_trylock <br>
+> 0000000000002903 (__TEXT,__text) external _os_lock_trylock <br>
+> 00000000000054b2 (__TEXT,__text) external _os_unfair_lock_trylock <br>
 
 Here we see multiple versions of the try lock and the most compatible by name is `__os_lock_handoff_trylock`.
 
@@ -292,7 +292,7 @@ loc_294d:
 }
 ```
 
-One of the interested for us flows is the next: `loc_2973` -> `loc_2983` -> `loc_294d` -> `thread_switch -> loc_2973`. Other flows defined either comparisons via cmpxchg or exit from this code
+One of the interested for us flows is the next: `loc_2973` -> `loc_2983` -> `loc_294d` -> `thread_switch -> loc_2973`. Other flows defined either comparisons via cmpxchg or exit from this code. The main interest for us is `thread_switch` procedure which I'm going to look at.
 
 **thread_switch**
 
@@ -307,7 +307,7 @@ _syscall_thread_switch:
 ```
 
 It's clear that `thread_switch` is peformed via `syscall` and the most importand here is address 0x100003d. `thread_switch`
-function is declared in the XNU (hybrid core of the OS X). Usually syscalls are mapped in some kind of table, where each system call has it's own address. I assumed the same approach and converted 3d into decimal number 61. And after some search of the Internet found this table:
+function is declared in the XNU (hybrid core of the OS X). Usually syscalls are mapped in some kind of table, where each system call has it's own address. I assumed the same approach and converted `3d` into decimal number `61`. And after some search of the Internet found this table:
 
 > List of mach traps in xnu-792.6.22 <br/>
 > <br/>
@@ -317,17 +317,15 @@ function is declared in the XNU (hybrid core of the OS X). Usually syscalls are 
 > /* 61 */    thread_switch <br/>
 > from http://radare.sourcearchive.com/documentation/1.4/osx-xnu-syscall_8h-source.html
 
-osfmk/kern/syscall_subr.c
-Force context switch of current thread. Allows for handoff (specifying the next thread hint)
+One more source of information could be xnu man pages
 
-0x100003d - seems like list of syscals is defined from 0x1000000
-Anyway, "3D" in hex is equal 61 
+> The thread_switch function provides low-level access to the scheduler's context switching code. new_thread is a hint that implements hand-off scheduling. The operating system will attempt to switch directly to the new thread (bypassing the normal logic that selects the next thread to run) if possible. Since this is a hint, it may be incorrect; it is ignored if it doesn't specify a thread on the same host as the current thread or if the scheduler cannot switch to that thread (i.e., not runable or already running on another processor). In this case, the normal logic to select the next thread to run is used; the current thread may continue running if there is no other appropriate thread to run.
 
-thread_switch usage
+
 
 **Summary** 
 
-Based on some explicit and implicit methods and approaches we've found differences between `tryLock` and `lock` method, which make reasonable to use `tryLock` first. However, it seldom technique and I tends to think that `lock` implementation could be improved or it's not so useful nowadays. Actually, it seems that one of these guesses are true. I've checked the most recent source code of objc-706 and at the moment you will not find tryLock in the `retain` implementation, simple lock / unlock technique was used there. However `__os_lock_handoff_`-family isn't also used. Currently it's replaced by `os_unfair_lock` new lock available since macOS 10.12.
+Based on some explicit and implicit methods and approaches we've found differences between `tryLock` and `lock` method, which make reasonable to use `tryLock` first. However, it rare technique and I tends to think that `lock` implementation could be improved or it's not so useful nowadays. Actually, it seems that one of these guesses are true. I've checked the most recent source code of objc-706 and at the moment you will not find tryLock in the `retain` implementation, simple lock-unlock pair is  was used there. However, `__os_lock_handoff_` isn't used anymore. Currently it's replaced by `os_unfair_lock` new lock available since macOS 10.12.
 
 **References:**
 
