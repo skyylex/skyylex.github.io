@@ -335,10 +335,9 @@ Based on some explicit and implicit methods and approaches we've found differenc
 
 **References:**
 
-- http://x86.renejeschke.de/html/file_module_x86_id_41.html
-- https://opensource.apple.com/source/xnu/xnu-1504.9.26/osfmk/kern/syscall_subr.c
-- http://web.mit.edu/darwin/src/modules/xnu/osfmk/man/thread_switch.html
-- https://lists.swift.org/pipermail/swift-dev/Week-of-Mon-20151214/000389.html
-- https://www3.nd.edu/~dthain/courses/cse40243/fall2015/intel-intro.html
-- https://github.com/hjl-tools/x86-psABI/wiki/X86-psABI
-- http://csiflabs.cs.ucdavis.edu/~ssdavis/50/att-syntax.htm
+- [CMPXCHG. x86 Instructions Reference](http://x86.renejeschke.de/html/file_module_x86_id_41.html)
+- [man thread_switch](http://web.mit.edu/darwin/src/modules/xnu/osfmk/man/thread_switch.html)
+- [swift-dev mailing list](https://lists.swift.org/pipermail/swift-dev/Week-of-Mon-20151214/000389.html)
+- [Introduction to X86-64 Assembly for Compiler Writers](https://www3.nd.edu/~dthain/courses/cse40243/fall2015/intel-intro.html)
+- [X86 psABI](https://github.com/hjl-tools/x86-psABI/wiki/X86-psABI)
+- [AT&T Assembly Syntax](http://csiflabs.cs.ucdavis.edu/~ssdavis/50/att-syntax.htm)
