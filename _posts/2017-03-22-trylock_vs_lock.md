@@ -331,7 +331,7 @@ So here we are. Hand-off implementation of the lock is constantly trying to swit
 
 **Summary** 
 
-Based on some explicit and implicit methods and approaches we've found differences between `tryLock` and `lock` method, which make reasonable to use `tryLock` first. However, it rare technique and I tends to think that `lock` implementation could be improved or it's not so useful nowadays. Actually, it seems that one of these guesses are true. I've checked the most recent source code of objc-706 and at the moment you will not find tryLock in the `retain` implementation, simple lock-unlock pair is  was used there. However, `__os_lock_handoff_` isn't used anymore. Currently it's replaced by `os_unfair_lock` new lock available since macOS 10.12.
+Based on some explicit and implicit methods and approaches we've found differences between `tryLock` and `lock` method, which make reasonable to use `tryLock` first. However, it's rare technique and I tends to think that `lock` implementation could be improved or it's not so useful nowadays. Actually, it seems that one of these guesses are true. I've checked the most recent source code of objc-706 and at the moment you will not find tryLock in the `retain` implementation, simple lock-unlock pair is  was used there. However, `__os_lock_handoff_` isn't used anymore. Currently it's replaced by `os_unfair_lock` new lock available since macOS 10.12.
 
 **References:**
 
