@@ -43,7 +43,7 @@ I will use binary for iPhoneSimulator platform, and `nm` for initial symbol sear
 
 > (undefined) external _os_lock_lock (from libSystem)
 
-We found `_os_lock_lock` and it's located in the library *libSystem*. Each binary contain list of the required dependencies which we can find using `otool`:
+We found `_os_lock_lock` and it's located in the library *libSystem*. Each binary contains list of the required dependencies which we can find using `otool`:
 
 ```bash
 otool -L Foundation | grep "libSystem"
@@ -57,7 +57,7 @@ Exactly what we need, then let's try to find this symbol in the discovered dylib
 nm /usr/lib/libSystem.dylib -m | grep "os_lock_lock"
 ``` 
 
-and we get empty result. `libSystem` refers a lot of libraries inside, and most probably provide simplified access for importing core functionality.
+and we get empty result. `libSystem` refers to the multiple libraries inside, and most probably is some kind of global entry point for importing core functionality.
 
 ```bash
 otool -L /usr/lib/libSystem.dylib
