@@ -57,7 +57,7 @@ Exactly what we need, then let's try to find this symbol in the discovered dylib
 nm /usr/lib/libSystem.dylib -m | grep "os_lock_lock"
 ``` 
 
-and we get empty result. `libSystem` refers to the multiple libraries inside, and most probably is some kind of global entry point for importing core functionality.
+and we get empty result. `libSystem` refers to the multiple libraries inside, and most probably is some kind of a global entry point for system functionality.
 
 ```bash
 otool -L /usr/lib/libSystem.dylib
@@ -100,7 +100,7 @@ otool -L /usr/lib/libSystem.dylib
 >   /usr/lib/system/libunwind.dylib (compatibility version 1.0.0, current version 35.3.0) <br>
 >   /usr/lib/system/libxpc.dylib (compatibility version 1.0.0, current version 972.30.7) <br>
 
-Using simple enumeration we can find out that `/usr/lib/system/libsystem_platform.dylib` is our next stop.
+Via simple enumeration (check and search symbol table for each .dylib) we can find out that `/usr/lib/system/libsystem_platform.dylib` is our next stop.
 
 ```bash
 nm /usr/lib/system/libsystem_platform.dylib -m | grep "os_lock_lock"
@@ -114,7 +114,7 @@ That means that `libsystem_platform.dylib` contains `_os_lock_lock` string in th
 objdump -macho -disassemble /usr/lib/system//libsystem_platform.dylib > libsystem_platform_disasm.out
 ```
 
-I stored whole output into the file hoping to work closely with the other symbol strings. But the result which I saw was a surprise for me. Output file was about 8k lines and I used search to find `_os_lock_lock`. And found this:
+I stored whole output into the file, hoping to work closely with the other symbol strings. But the result which I saw was a surprise for me. Output file was about 8k lines and I used search to find `_os_lock_lock`. And found this:
 
 ```asm
 _os_lock_lock:
@@ -184,9 +184,9 @@ __os_lock_handoff_trylock:
     2918:	sete %al
     291b:	retq
 ```
-Key operation in the code above is `lock cmpxchgl`, this instruction compares operands and load one of the operand in destination or in the %eax register. `lock` attribute provide atomic behaviour.
+Key operation in the code above is `lock cmpxchgl`, this instruction compares operands and loads one of the operand in destination or in the %eax register. `lock` attribute provides atomic behaviour.
 
-Almost the same implementation in the `__os_lock_handoff_lock`. The difference of this code is in the additional logic. If `cmpxchgl` isn't able to load into `%rdi`, conditional jump to 0x25af will be performed (`jne 0x25af`). So we move to the `__os_lock_handoff_lock_slow` label.
+Almost the same implementation in the `__os_lock_handoff_lock`. The key difference of this code is in the last few lines. If `cmpxchgl` isn't able to load into `%rdi`, conditional jump to 0x25af will be performed (`jne 0x25af`). 
 
 ```asm
 __os_lock_handoff_lock:
@@ -296,7 +296,7 @@ One of the interested for us flows is the next: `loc_2973` -> `loc_2983` -> `loc
 
 **thread_switch**
 
-Thread switch is defined in the /usr/lib/system/libsystem_kernel.dylib:
+This symbol string is defined in the /usr/lib/system/libsystem_kernel.dylib:
 
 ```asm
 _syscall_thread_switch:
@@ -307,7 +307,7 @@ _syscall_thread_switch:
 ```
 
 It's clear that `thread_switch` is peformed via `syscall` and the most importand here is address 0x100003d. `thread_switch`
-function is declared in the XNU (hybrid core of the OS X). Usually syscalls are mapped in some kind of table, where each system call has it's own address. I assumed the same approach and converted `3d` into decimal number `61`. And after some search of the Internet found this table:
+function is declared in the XNU (hybrid core of the OS X). Usually syscalls are mapped in some kind of a table, where each system call has it's own address. I assumed the same approach and converted `3d` into decimal number `61`. And after some search of the Internet found this table:
 
 > List of mach traps in xnu-792.6.22 <br/>
 > <br/>
@@ -317,11 +317,11 @@ function is declared in the XNU (hybrid core of the OS X). Usually syscalls are 
 > /* 61 */    thread_switch <br/>
 > from http://radare.sourcearchive.com/documentation/1.4/osx-xnu-syscall_8h-source.html
 
-One more source of information could be xnu man pages
+One more source of information could be XNU man pages
 
 > The thread_switch function provides low-level access to the scheduler's context switching code. new_thread is a hint that implements hand-off scheduling. The operating system will attempt to switch directly to the new thread (bypassing the normal logic that selects the next thread to run) if possible. Since this is a hint, it may be incorrect; it is ignored if it doesn't specify a thread on the same host as the current thread or if the scheduler cannot switch to that thread (i.e., not runable or already running on another processor). In this case, the normal logic to select the next thread to run is used; the current thread may continue running if there is no other appropriate thread to run.
 
-
+So here we are. Hand-off implementation of the lock is constantly trying to switch thread inside a loop while there is no way to perform lock. Switching threads is implemented via syscalls and by the definition can not be extremely fast. So that's why in general case it's better to try lock once again before.
 
 **Summary** 
 
@@ -329,7 +329,6 @@ Based on some explicit and implicit methods and approaches we've found differenc
 
 **References:**
 
-- https://skyylex.github.io/NSObject_internals_-retain_and_release
 - http://x86.renejeschke.de/html/file_module_x86_id_41.html
 - https://opensource.apple.com/source/xnu/xnu-1504.9.26/osfmk/kern/syscall_subr.c
 - http://web.mit.edu/darwin/src/modules/xnu/osfmk/man/thread_switch.html
