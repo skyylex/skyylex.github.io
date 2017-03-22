@@ -1,3 +1,8 @@
+layout: default
+title: tryLock vs lock
+---
+### **tryLock vs lock**
+
 **Introduction**
 
 In previous post about retain and release I have found that synchronized access to the reference counters is built over the lock which uses `tryLock` function first. And if `tryLock` doesn't lock then "slow" path is used with `lock` function. However, I didn't have any concrete information about why `lock` is slower than `tryLock`. So in this post I will try to find and explain why.
@@ -321,7 +326,7 @@ One more source of information could be XNU man pages
 
 > The thread_switch function provides low-level access to the scheduler's context switching code. new_thread is a hint that implements hand-off scheduling. The operating system will attempt to switch directly to the new thread (bypassing the normal logic that selects the next thread to run) if possible. Since this is a hint, it may be incorrect; it is ignored if it doesn't specify a thread on the same host as the current thread or if the scheduler cannot switch to that thread (i.e., not runable or already running on another processor). In this case, the normal logic to select the next thread to run is used; the current thread may continue running if there is no other appropriate thread to run.
 
-So here we are. Hand-off implementation of the lock is constantly trying to switch thread inside a loop while there is no way to perform lock. Switching threads is implemented via syscalls and by the definition can not be extremely fast. So that's why in general case it's better to try lock once again before.
+So here we are. Hand-off implementation of the lock is constantly trying to switch thread inside a loop while there is no way to perform lock. Switching threads isn't trivial task, so here it's implemented via syscalls and by the definition it can not be fast comparing to compare functions. So that's why in general case it's better to try lock once again before. Off cource this proof isn't too much accurate, but it seems that it fits into existing picture.
 
 **Summary** 
 
