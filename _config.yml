@@ -13,11 +13,9 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: Software Engineering blog
+title: "Yury Lapitsky's Homepage"
 email: yury.lapitsky@gmail.com
-description: > 
-  Software engineering blog by Yury Lapisky (@skyylex) for everyone interested in programming, 
-  software design and architectures. Swift, Objective-C and iOS, Mac are first-class citizens here.
+description: ""
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://skyylex.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 
