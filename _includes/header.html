@@ -7,7 +7,7 @@
 }
 
 .context_text { 
-  text-align: left; 
+  text-align: justify; 
   line-height: 140%;
 }
 
@@ -15,6 +15,16 @@
   text-decoration: underline; 
   white-space: pre; 
   vertical-align: text-bottom;
+}
+
+.header_title {
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.wrapper {
+  padding: 0px;
 }
 
 </style>
@@ -32,30 +42,15 @@
 
 <header class="common_header site-header" role="banner">
   <div class="wrapper">
-    <span style="float: left;">
-      <div style="font-size: 1.75em; font-weight: bold;">{{ site.title | escape }}</div>
-      <div>&nbsp</div>
-      <div>author: Yury Lapitsky</div>
-      <div>e-mail: {{ site.email }}</div>
-    </span>
+    <div class="header_title">{{ site.title | escape }}</div>
+    <div>&nbsp</div>
+    
 
-    <span style="float: right;">
-      <div>
-        <span>
-          [<a class="nav_anchor" href="/">home</a>]
-        </span>
-        <span>
-          [<a class="nav_anchor" href="/posts">posts</a>]
-        </span>
-        <span>
-          [<a class="nav_anchor" href="/projects">projects</a>]
-        </span>
-        <span>
-          [<a class="nav_anchor" href="/about">about</a>]
-        </span>
-      </div>
-      <br>
-    </span>
+    <div style="text-align:right;">
+        [<a class="nav_anchor" href="/">home</a>]
+        [<a class="nav_anchor" href="/posts">blog</a>]
+        [<a class="nav_anchor" href="/about">about</a>]
+    </div>
 
   </div>
 

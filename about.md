@@ -23,11 +23,11 @@ Bachelor degree at [Belarusian State University Of Informatics and Radioelectron
 
 - ReadUS - non-released e-book reader and remote e-book library. [2014-2015]
 - G.O.A.T. - traveler assistant application. [beginning of 2016 - present]
-- All other projects are related to my open-source activity and were (or will be) posted in the [[projects](/projects)]
 
 **Other activity**
 
-- [Stackoverflow](http://stackoverflow.com/users/1417714/skyylex)
+- [Stackoverflow](https://stackoverflow.com/users/1417714/skyylex)
+- [Github](https://github.com/skyylex)
 
 **Hobbies**
 
