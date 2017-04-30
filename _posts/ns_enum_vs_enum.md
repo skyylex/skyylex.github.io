@@ -1,5 +1,29 @@
 ns_enum vs enum - reversing
 
+```objc
+
+#import <Foundation/Foundation.h>
+
+typedef enum : NSUInteger {
+    EnumTypeOption0,
+    EnumTypeOption1,
+} EnumType;
+
+typedef NS_ENUM(NSUInteger, NSEnumType) {
+    NSEnumTypeOption0,
+    NSEnumTypeOption1,
+};
+
+int main(int argc, const char * argv[]) {
+    @autoreleasepool {
+        // insert code here...
+        NSLog(@"Hello, World!");
+    }
+    return 0;
+}
+
+```
+
 ``` asm
 # Assembly output for main.m
 # Generated at 1:05:48 AM on Monday, May 1, 2017
