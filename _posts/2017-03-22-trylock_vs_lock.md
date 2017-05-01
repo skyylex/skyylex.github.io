@@ -47,7 +47,7 @@ Private header means that described functionality isn't supposed to be used by d
 
 I will use binary for iPhoneSimulator platform, and `nm` for initial symbol search.
 
-`nm Foundation -m | grep "os_lock_lock"`, - where Foundation is a binary which is located at Foundation.framework/Foundation. The output will be the following:
+`nm Foundation -m | grep "os_lock_lock"`, - where Foundation is a binary which is located at `Foundation.framework/Foundation`. The output will be the following:
 
 > (undefined) external _os_lock_lock (from libSystem)
 
@@ -158,7 +158,7 @@ but still these stored values have no meaning for our investigation, because we 
 otool -dV -s __DATA __const /usr/lib/system//libsystem_platform.dylib
 ```
 
-> 0000000000009210	73 79 00 00 00 00 00 00 9d 25 00 00 00 00 00 00 
+> 0000000000009210	73 79 00 00 00 00 00 00 9d 25 00 00 00 00 00 00 <br>
 > 0000000000009220	09 29 00 00 00 00 00 00 b4 25 00 00 00 00 00 00
 
 So, currently, we have no explicit calls of the lock function. But, for example, we can assume that such lock function should be somewhere in this library or other loaded libraries.
