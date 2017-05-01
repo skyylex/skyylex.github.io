@@ -6,7 +6,8 @@ title: tryLock vs lock
 
 **Introduction**
 
-In previous post about retain and release I have found that synchronized access to the reference counters is built over the lock which uses `tryLock` function first. And if `tryLock` doesn't lock then "slow" path is used with `lock` function. However, I didn't have any concrete information about why `lock` is slower than `tryLock`. So in this post I will try to find and explain why.
+In the [previous post]({{ site.baseurl }}{% post_url 2017-03-08-NSObject_internals_-retain_and_release %})
+ about retain and release I have found that synchronized access to the reference counters is built over the lock which uses `tryLock` function first. And if `tryLock` doesn't lock then "slow" path is used with `lock` function. However, I didn't have any concrete information about why `lock` is slower than `tryLock`. So in this post I will try to find and explain why.
 
 **Analysis**
 
