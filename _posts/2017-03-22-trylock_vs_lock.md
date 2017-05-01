@@ -34,7 +34,7 @@ class spinlock_t {
 So the next target of the journey is `os_lock_handoff_s`, `os_lock_lock` and `os_lock_unlock`. What we can say about `os_lock_handoff_s`? Quick search in the Internet says that this type is defined in the system private header `lock_private.h`. This is most probably true, because that header is included in the `NSOject.m`:
 
 ```c++
-#   include <os/lock_private.h>
+#include <os/lock_private.h>
 ```
 
 Private header means that described functionality isn't supposed to be used by developers, also that these types aren't covered in the documentation from the official sources. Ok, if we cannot get sources and more or less official documentation let's take a look at reverse engineering tools. I'll start from the most obvious way. We know that `retain` and `release` is a part of the `Objective-C` language, more explicitly it's part of the `NSObject` implementation. And `NSObject` is one of the root classes in the `Foundation` framework. Each platform has it's own build of `Foundation`:
