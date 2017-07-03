@@ -1,1 +1,2 @@
-modulemap in Xcode
+- modulemap in Xcode
+- console application and parsing arguments
