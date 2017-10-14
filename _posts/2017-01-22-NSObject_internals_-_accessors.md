@@ -120,6 +120,12 @@ id *slot = (id*) ((char*)self + offset);
 
 Calculation of the pointer is rather trivial, just need to calculate necessary address using a base address and offset. The only interesting issue for me is why does Objective-C implementation use offset at all? (Another option using direct reference). I have no facts here, my assumption that calculation of the instance variable address doesn't cost too much in terms of processor time, in the same time such referencing is very flexible against address changes and could be easily verified. Also, such technique potentially will use less memory, because offset can have a small type, based on the known total layout size.
 
+**UPDATE October 14, 2017**
+
+Thanks to Denis Morozkin, who provided explanation and references about why offset is used. The reason is that Objective-C is able to change class implementation on runtime and obviously such significant changes to class require additional flexibility from the related data. Offset that could be verified and recalculated on runtime provides required support.
+
+More information - [Non-fragile ivars](http://www.sealiesoftware.com/blog/archive/2009/01/27/objc_explain_Non-fragile_ivars.html)
+
 **Setter step #3. Prepare new value + memory management**
 
 Another branching in the code takes place. The same as it's described in the apple docs, if you place copy qualificator - value is copied and isn't retained, because copy already set to 1 reference counter during creation.
