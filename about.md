@@ -17,7 +17,8 @@ Bachelor degree at [Belarusian State University Of Informatics and Radioelectron
 
 - Software engineer, iOS at Quadrate64. [January 2013 - September 2013]
 - Software engineer, iOS at Exadel. [September 2013 - December 2014]
-- Software engineer, iOS at HiQo Solutions. [December 2014 - present]
+- Software engineer, iOS at HiQo Solutions. [December 2014 - September 2017]
+- Software engineer, iOS at TomTom. [October 2017 - present]
 
 **Additional projects**
 
@@ -31,6 +32,7 @@ Bachelor degree at [Belarusian State University Of Informatics and Radioelectron
 
 **Hobbies**
 
-- Music.
-- Computer Science.
-- Classic sci-fi literature.
+- Music
+- History
+- Computer Science
+- Reading books
