@@ -118,13 +118,7 @@ id oldValue;
 id *slot = (id*) ((char*)self + offset);
 ```
 
-Calculation of the pointer is rather trivial, just need to calculate necessary address using a base address and offset. The only interesting issue for me is why does Objective-C implementation use offset at all? (Another option using direct reference). I have no facts here, my assumption that calculation of the instance variable address doesn't cost too much in terms of processor time, in the same time such referencing is very flexible against address changes and could be easily verified. Also, such technique potentially will use less memory, because offset can have a small type, based on the known total layout size.
-
-**UPDATE October 14, 2017**
-
-Thanks to Denis Morozkin, who provided explanation and references about why offset is used. The reason is that Objective-C is able to change class implementation on runtime and obviously such significant changes to class require additional flexibility from the related data. Offset that could be verified and recalculated on runtime provides required support.
-
-More information - [Non-fragile ivars](http://www.sealiesoftware.com/blog/archive/2009/01/27/objc_explain_Non-fragile_ivars.html)
+Calculation of the pointer is rather trivial, just need to calculate necessary address using a base address and offset. The only interesting issue for me is why does Objective-C implementation use offset at all? (Another option using direct reference). I have no facts here, my assumption that calculation of the instance variable address doesn't cost too much in terms of processor time, in the same time such referencing is very flexible against address changes and could be easily verified. Also, such technique potentially will use less memory, because offset can have a small type, based on the known total layout size. **Update to the assumption is provided at the end of the article**
 
 **Setter step #3. Prepare new value + memory management**
 
@@ -202,6 +196,12 @@ id objc_getProperty(id self, SEL _cmd, ptrdiff_t offset, BOOL atomic) {
 ```
 
 The flow for the getter is quite similar. Steps #1 and #2 are almost the same as in setter. The difference is the atomic/nonatomic behavior. Thread-safety isn't taken into account. It follows setter logic (to prevent read-write conflict). I mean that atomic object is retained and nonatomic is not. Basically, setter is already retaining the `value`, so in the simple case value doesn't need to retained/released once again. And nonatomic approach probably was planned as a flow when another thread doesn't release the `value`. `atomic` was built over the idea to make able to grab value inside the lock and to allow to return it from function ignoring other threads activity.
+
+**UPDATE October 14, 2017**
+
+Thanks to Denis Morozkin, who provided explanation and references about why offset is used. The reason is that Objective-C is able to change class implementation on runtime and obviously such significant changes to class require additional flexibility from the related data. Offset that could be verified and recalculated on runtime provides required support.
+
+More information - [Non-fragile ivars](http://www.sealiesoftware.com/blog/archive/2009/01/27/objc_explain_Non-fragile_ivars.html)
 
 **Tips and tricks:**
 - All locks are stored in the map called `PropertyLocks` of type `StripedMap`, where `void *` is the key for the lock value. However, main map storage, specified as static array, contains only up to 64 items. It means that limit for properties is 64 per class or that each item in array contains also additional structure (for example: linked list).
