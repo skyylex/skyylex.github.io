@@ -7,11 +7,11 @@ title: NSObject Internals. Episode 2 - Properties (accessors)
 
 **Introduction**
 
-Today I continue `NSObject` investigation and take a look on the `objc-accessors.mm` file, which brings functionality related to the synthesized properties. Property is a standard part of the OOP world. In Objective-C properties is an encapsulated approach for accessing `ivar`.
+Today I continue `NSObject` investigation and take a look on the `objc-accessors.mm` file, which brings functionality related to the synthesized properties. Property is a standard part of the OOP world. In Objective-C properties are an encapsulated approach for accessing `ivar`.
 
 **Sources analysis**
 
-Most of the functionality are covered by the following functions:
+Most of the functionality is covered by the following functions:
 
 - `id objc_getProperty(id self, SEL _cmd, ptrdiff_t offset, BOOL atomic)`
 - `static inline void reallySetProperty(id self, SEL _cmd, id newValue, ptrdiff_t offset, bool atomic, bool copy, bool mutableCopy)`
@@ -65,7 +65,7 @@ Use of the property in program flow starts from receiving first value in the set
 - `id self` - required part (1st) of the target field pointer
 - `SEL _cmd` - argument isn't used in the function.
 - `id newValue` - value to set
-- `ptrdiff_t offset` - required part (2st) of the target field pointer
+- `ptrdiff_t offset` - required part (2nd) of the target field pointer
 - `bool atomic` - additional logic
 - `bool copy` - additional logic
 - `bool mutableCopy` - additional logic
@@ -103,7 +103,7 @@ That means that first declared member will have the first position in memory (ze
 
 > When a new object is created, memory for it is allocated, and its instance variables are initialized. First among the object’s variables is a pointer to its class structure. This pointer, called isa, gives the object access to its class and, through the class, to all the classes it inherits from.
 
-Ok, now it's clear, that request for update using offset == 0 is a class variable update. However, why it's required to call separate method `object_setClass`? There are several assumptions for that. First one, that classes are runtime entities and they need to be handled by runtime system (they should be loaded and initialized, and etc), so Objective-C runtime should prevent direct access to isa. Second one, `isa_t` type isn't used in the programmer space. Objective-C programmers operate with `Class`.
+Ok, now it's clear, that request for update using offset == 0 is a class variable update. However, why is it required to call separate method `object_setClass`? There are several assumptions for that. First one, that classes are runtime entities and they need to be handled by runtime system (they should be loaded and initialized, and etc), so Objective-C runtime should prevent direct access to isa. Second one, `isa_t` type isn't used in the programmer space. Objective-C programmers operate with `Class`.
 
 **Notice**: it's worth to mention, that child classes of `NSObject` and `NSObject` are not identical. However, `isa` is located at the beginning of layout there too. It's easy to check in *Xcode lldb*: create an object of NSObject subclass. And compare output of the `isa` address and `object` address.
 - `po &(object->isa)`
@@ -118,7 +118,7 @@ id oldValue;
 id *slot = (id*) ((char*)self + offset);
 ```
 
-Calculation of the pointer is rather trivial, just need to calculate necessary address using a base address and offset. The only interesting issue for me is why Objective-C implementation uses offset at all? (Another option using direct reference). I have no facts here, my assumption that calculation of the instance variable address doesn't cost too much in terms of processor time, in the same time such referencing is very flexible against address changes and could be easily verified. Also, such technique potentially will use less memory, because offset can have a small type, based on the known total layout size.
+Calculation of the pointer is rather trivial, just need to calculate necessary address using a base address and offset. The only interesting issue for me is why does Objective-C implementation use offset at all? (Another option using direct reference). I have no facts here, my assumption that calculation of the instance variable address doesn't cost too much in terms of processor time, in the same time such referencing is very flexible against address changes and could be easily verified. Also, such technique potentially will use less memory, because offset can have a small type, based on the known total layout size.
 
 **Setter step #3. Prepare new value + memory management**
 
@@ -195,7 +195,7 @@ id objc_getProperty(id self, SEL _cmd, ptrdiff_t offset, BOOL atomic) {
 }
 ```
 
-The flow for the getter is quite similar. Steps #1 and #2 is almost the same as in setter. The difference is the atomic/nonatomic behavior. Thread-safety isn't taken into account. It follows setter logic (to prevent read-write conflict). I mean that atomic object is retained and nonatomic is not. Basically, setter is already retaining the `value`, so in the simple case value doesn't need to retained/released once again. And nonatomic approach probably was planned as a flow when another thread doesn't release the `value`. `atomic` was built over the idea to make able to grab value inside the lock and to allow to return it from function ignoring other threads activity.
+The flow for the getter is quite similar. Steps #1 and #2 are almost the same as in setter. The difference is the atomic/nonatomic behavior. Thread-safety isn't taken into account. It follows setter logic (to prevent read-write conflict). I mean that atomic object is retained and nonatomic is not. Basically, setter is already retaining the `value`, so in the simple case value doesn't need to retained/released once again. And nonatomic approach probably was planned as a flow when another thread doesn't release the `value`. `atomic` was built over the idea to make able to grab value inside the lock and to allow to return it from function ignoring other threads activity.
 
 **Tips and tricks:**
 - All locks are stored in the map called `PropertyLocks` of type `StripedMap`, where `void *` is the key for the lock value. However, main map storage, specified as static array, contains only up to 64 items. It means that limit for properties is 64 per class or that each item in array contains also additional structure (for example: linked list).
