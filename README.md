@@ -1,1 +1,1 @@
-**https://yurylapitsky.com** - my website dedicated to Software Engineering on iOS / OS X platform
+**https://yurylapitsky.com** -  my homepage and blog dedicated to software engineering on iOS / OS X platform and other stuff
