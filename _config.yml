@@ -35,3 +35,9 @@ gems:
 exclude:
   - Gemfile
   - Gemfile.lock
+defaults:
+  -
+    scope:
+      path:            "googleaa9417935a409c2f.html"
+    values:
+      sitemap:         false
