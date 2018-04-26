@@ -17,7 +17,7 @@ title: "Yury Lapitsky's Homepage"
 email: yury.lapitsky@gmail.com
 description: ""
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://skyylex.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://yurylapitsky.com" # the base hostname & protocol for your site, e.g. http://example.com
 
 permalink: /:title
 
