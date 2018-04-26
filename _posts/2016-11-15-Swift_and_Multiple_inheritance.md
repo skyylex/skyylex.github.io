@@ -9,18 +9,18 @@ title: Swift and Multiple Inheritance
 
 **Introduction**
 
-I like to find out new edges in the well-known concepts. I think no need to prove that basic OOP concepts, such as incapsulation, inheritance and polymorphism are well-known. They were discussed a millions of times and I should not spend time on repeating this. However, I will put some references at the end to be precise enought for someone who needs some more info about the subject. And the subject today will be Multiple Inheritance in Swift, as the title says. Why? Because I thought that Objective-C have no support of a multiple inheritance. And Swift was extended with the default implementation for protocols which is a type of a multiple inheritance. So it's interesting to play with the old issues in the new environment.
+I like to find out new edges in the well-known concepts. I think no need to prove that basic OOP concepts, such as encapsulation, inheritance, and polymorphism are well-known. They were discussed millions of times and I should not spend time on repeating this. However, I will put some references at the end to be precise enough for someone who needs some more info on the subject. And the subject today will be Multiple Inheritance in Swift, as the title says. Why? Because I thought that Objective-C has no support of a multiple inheritance. And Swift was extended with the default implementation for protocols which is a type of a multiple inheritance. So it's interesting to play with the old issues in the new environment.
 
 
-**Notice**: before moving directly to the Swift details I want to make clear that inheritance could be classified according to the inherited subject: 1) inherited implementation 2) inherited interface. Now it's clear that Objective-C has also multiple inheritance in terms of conforming to @protocol. However it has no issues (described further) because @protocol is just a declaration of available methods for usage.
+**Notice**: before moving directly to the Swift details I want to make clear that inheritance could be classified according to the inherited subject: *inherited implementation* or *inherited interface*. Now it's clear that Objective-C has also multiple inheritance in terms of conforming to `@protocol`. However, it has no issues (described further) because `@protocol` is just a declaration of available methods for usage.
 
 **How multiple inheritance is presented in Swift**
 
-Swift has such feature as a protocols. Mostly it has the same meaning as in Objective-C. The difference was made in Swift 3 when protocol was allowed to extend with the default implementation. And class(struct) which conforms to protocol will inherit this implementation. The idea is simple to share same functionality without creating separate implementation for each of the methods in each inherited class or struct. And from the first look it might look great. Unfortunately, there is a classic problem where two or more protocols (or protocol and class/strus) has exactly the same method signature. In that case there is no way for linker to choose what implementation to use in the inherited class.
+Swift has such feature as protocols. Mostly it has the same meaning as in Objective-C. The difference was made in Swift 3, a protocol allows to add default implementation. And class(struct) which conforms to such protocol will inherit this implementation. The idea is simply to share same functionality without creating a separate implementation for each of the methods in each inherited class or struct. And from the first look, it might look great. Unfortunately, there is a classic problem where two or more protocols (or protocol and class/struct) has exactly the same method signature. In that case, there is no way for the linker to choose what implementation to use in the inherited class.
 
 **Swift, we have a problem**
 
-The code below represents a problem. There are two protocols A and B with extensions that contains default implementations. These protocols were declared as conformed by class ConflictTarget. The Xcode output clearly displays that such configuration will not work.
+The code below represents a problem. There are two protocols A and B with extensions that contain default implementations. These protocols were declared as conformed to class ConflictTarget. And Xcode output clearly displays that such configuration will not work.
 
 
 ```
@@ -104,7 +104,7 @@ NamesConflict.playground:5:10: note: candidate exactly matches
 
 1. "Favor object composition over class inheritance". I agree that the case described above is rare, and if the user has control over the code related to protocols declaration and implementation it could be easily fixed. However, if all you have is binary framework there is no much to choose. 
 
-2. The second issue I see is related to the functionality for protocols to inherit from the other protocols. When you use them only as API declaration it's ok. In such case you just save time to not declare same methods twice. But if the extension with the default implementation might appear somewhere, it brings an additional mess in understanding of the system behaviour during code analysis and debugging.
+2. The second issue I see is related to the functionality for protocols to inherit from the other protocols. When you use them only as API declaration it's ok. In such case, you just save time to not declare same methods twice. But if the extension with the default implementation might appear somewhere, it brings an additional mess to understand the system behavior during code analysis and debugging.
 
 **Thank you for reading!**
 
