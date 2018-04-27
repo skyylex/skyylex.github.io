@@ -44,7 +44,7 @@
   <div class="wrapper">
     <div class="header_title">{{ site.title | escape }}</div>
     <div>&nbsp</div>
-    
+        
 
     <div style="text-align:right;">
         [<a class="nav_anchor" href="/">home</a>]
@@ -55,3 +55,13 @@
   </div>
 
 </header>
+{%if page.id %}
+  <br>
+	<div class="wrapper">
+		{% for tag in page.tags %}
+    			{% capture tag_name %}{{ tag }}{% endcapture %}
+    			<a href="/tag/{{ tag_name }}"><code class="highligher-rouge"><nobr>{{ tag_name }}</nobr></code>&nbsp;</a>
+  		{% endfor %}
+	</div>
+
+{% endif %}

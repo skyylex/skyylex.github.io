@@ -35,6 +35,9 @@ plugins:
 exclude:
   - Gemfile
   - Gemfile.lock
+  - CNAME
+  - generate-tags-files.py
+  - grep
 defaults:
   -
     scope:
