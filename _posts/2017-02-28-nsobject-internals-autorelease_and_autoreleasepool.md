@@ -1,7 +1,8 @@
 ---
 layout: default
 title: NSObject Internals. Episode 3 - autorelease and @autoreleasePool
-tags: objective-c nsobject nsobject-internals autorelease autorelease-pool
+description: New episode covers one of the aspects of memory management in Objective-C - autorelease and autorelease pool
+tags: objective-c nsobject nsobject-internals autorelease autorelease-pool memory-management
 ---
 **NSObject Internals. Episode 3 - `autorelease` and `@autoreleasePool`**
 

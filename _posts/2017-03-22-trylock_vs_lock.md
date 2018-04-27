@@ -1,8 +1,10 @@
 ---
 layout: default
 title: tryLock vs lock
-tags: multithreading locks synchronization disassembly
+description: Trying to understand the logic behind synchronization approaches used in reference counting in Objective-C
+tags: multithreading locks synchronization disassembly osx
 ---
+
 ### **tryLock vs lock**
 
 **Introduction**

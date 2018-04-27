@@ -1,7 +1,8 @@
 ---
 layout: default
 title: NSObject Internals. Episode 4 - retain and release
-tags: objective-c nsobject nsobject-internals retain release
+description: Exploring two basic operations for memory management in Objective-C using the available source code
+tags: objective-c nsobject nsobject-internals retain release memory-management
 ---
 **NSObject Internals. Episode 4 - `retain` and `release`**
 

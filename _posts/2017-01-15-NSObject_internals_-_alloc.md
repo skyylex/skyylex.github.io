@@ -1,6 +1,7 @@
 ---
 layout: default
 title: NSObject Internals. Episode 1 - alloc
+description: Start of the new series where we're digging into NSObject source code. In the first episode, we'll check how [NSObject alloc] looks inside and learn some tricks
 tags: objective-c nsobject nsobject-internals
 ---
 

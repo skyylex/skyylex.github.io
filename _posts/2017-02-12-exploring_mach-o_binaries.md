@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Exploring Mach-O binaries. Tools - pagestuff
+description: More about binaries and disassembly in OS X. And pretty simple, but still powerful tool - pagestuff
 tags: mach-o disassembly disassembly-tools pagestuff binaries 
 ---
 
