@@ -1,6 +1,7 @@
 ---
 layout: default
 title: NSObject Internals. Episode 1 - alloc
+tags: objective-c nsobject nsobject-internals
 ---
 
 **NSObject Internals. Episode 1 - alloc**

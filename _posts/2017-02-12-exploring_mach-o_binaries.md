@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Exploring Mach-O binaries. Tools - pagestuff
+tags: mach-o disassembly disassembly-tools pagestuff binaries 
 ---
 
 **Exploring Mach-O binaries. Tools - pagestuff**

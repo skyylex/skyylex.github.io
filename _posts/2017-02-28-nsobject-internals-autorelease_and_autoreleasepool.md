@@ -1,6 +1,7 @@
 ---
 layout: default
 title: NSObject Internals. Episode 3 - autorelease and @autoreleasePool
+tags: objective-c nsobject nsobject-internals autorelease autorelease-pool
 ---
 **NSObject Internals. Episode 3 - `autorelease` and `@autoreleasePool`**
 

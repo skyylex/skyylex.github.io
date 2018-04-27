@@ -1,6 +1,7 @@
 ---
 layout: default
 title: NSObject Internals. Episode 2 - Properties (accessors)
+tags: objective-c nsobject nsobject-internals property
 ---
 
 **NSObject Internals. Episode 2 - Properties (accessors)**

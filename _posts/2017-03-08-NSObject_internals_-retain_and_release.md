@@ -1,6 +1,7 @@
 ---
 layout: default
 title: NSObject Internals. Episode 4 - retain and release
+tags: objective-c nsobject nsobject-internals retain release
 ---
 **NSObject Internals. Episode 4 - `retain` and `release`**
 

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: tryLock vs lock
+tags: multithreading locks synchronization disassembly
 ---
 ### **tryLock vs lock**
 

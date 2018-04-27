@@ -1,6 +1,8 @@
 ---
 layout: default
 title: Swift and Multiple Inheritance
+description: Some aspects of multiple inheritance using protocols in Swift
+tags: oop swift multiple-inheritance
 ---
 
 <!-- tags: swift, objc, multiple_inheritance -->
