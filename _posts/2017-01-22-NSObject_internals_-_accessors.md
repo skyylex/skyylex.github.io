@@ -18,7 +18,7 @@ Most of the functionality is covered by the following functions:
 - `id objc_getProperty(id self, SEL _cmd, ptrdiff_t offset, BOOL atomic)`
 - `static inline void reallySetProperty(id self, SEL _cmd, id newValue, ptrdiff_t offset, bool atomic, bool copy, bool mutableCopy)`
 
-These two functions provide basic operations for work with variable: to get value from variable and to set value to the variable. There is a term *mutator method*, but programmers usually use *setter* and *getter*.
+These two functions provide basic operations for work with `ivar`: to get value from and to set to `ivar`. There is a term *mutator method*, but I usually heard terms *setter* and *getter*.
 
 The main idea of the *mutator method* is to restrict direct access to the variable and provide specific functions for that purpose. This approach allows injecting additional logic inside *getter/setter* functions. For example, inject mechanism to enable thread-safe access or manage memory allocated for `ivar`.
 
@@ -217,5 +217,3 @@ More information - [Non-fragile ivars](http://www.sealiesoftware.com/blog/archiv
 - [Wikipedia. Mutator method](https://en.wikipedia.org/wiki/Mutator_method)
 
 **Thank you for reading!**
-
-**[<<<< previous episode]({{site.url}}/NSObject_internals_-_alloc) - [next episode >>>>]({{site.url}}/nsobject-internals-autorelease_and_autoreleasepool)**

@@ -115,5 +115,3 @@ Analysing source code can bring new ideas and techniques, which I'll try to shar
         (void)zone;
 
 **Thank you for reading!**
-
-**[next episode >>>>]({{site.url}}/NSObject_internals_-_accessors)**
