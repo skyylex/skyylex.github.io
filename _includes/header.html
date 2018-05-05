@@ -57,7 +57,7 @@
 </header>
 {%if page.id %}
   <br>
-	<div class="wrapper">
+	<div class="wrapper" style="padding-left: 10px; padding-right: 10px;">
 		{% for tag in page.tags %}
     			{% capture tag_name %}{{ tag }}{% endcapture %}
     			<a href="/tag/{{ tag_name }}"><code class="highligher-rouge"><nobr>{{ tag_name }}</nobr></code>&nbsp;</a>
