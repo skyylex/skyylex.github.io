@@ -2,23 +2,23 @@
 layout: default
 title: Exploring Mach-O binaries. Tools - pagestuff
 description: More about binaries and disassembly in OS X. And pretty simple, but still powerful tool - pagestuff
-tags: mach-o disassembly disassembly-tools pagestuff binaries 
+tags: mach-o disassembly disassembly-tools pagestuff binaries command-line
 ---
 
 **Exploring Mach-O binaries. Tools - pagestuff**
 
 **Introduction**
 
-Most of the programmers start their way in the software development by learning specific language, trying hard to understand documentation which describes key feaures and specific details, investigating available tools such as standard language libraries, sometimes they even check source code of the language implementation or standard library in order to get full understanding how things work. And I think it's correct way of self-development and all of the listed activities are valuable, but there is a problem. Documentation rarely covers all aspects, also as source code isn't always available for all of the critical parts. What to do in this case? I believe that reverse engineering and exploration of the binaries could help completing the picture in such situations. That's why today I start new series of posts related to analysis of binaries in the macOS (OS X) and iOS.
+Most of the programmers start their way in the software development by learning specific language, trying hard to understand documentation which describes key features and specific details, investigating available tools such as standard language libraries, sometimes they even check source code of the language implementation or standard library in order to get full understanding how things work. And I think it's a correct way of self-development and all of the listed activities are valuable, but there is a problem. Documentation rarely covers all aspects, also as source code isn't always available for all of the critical parts. What to do in this case? I believe that reverse engineering and exploration of the binaries could help to complete the picture in such situations. That's why today I start new series of posts related to analysis of binaries in the macOS (OS X) and iOS.
 
 **Mach-O binaries**
 
-Mach-O is a file format which is used in the most of the Mach-based operational systems. The history of Mach-kernel started in the Carnegie Mellon University and lately continued in the OS X / iOS as as part of hybrid XNU. There was a whole story about the transition from "classic" Mac OS to Mach-based operation system called OS X (and currently called macOS). I've put the links below to the original CMU project and related Wikipedia pages for curious. However, currently I'm mostly interested in the technical aspect located in the Mach-O structure.
+Mach-O is a file format which is used in the most of the Mach-based operational systems. The history of Mach-kernel started in the Carnegie Mellon University and later continued in the OS X / iOS as part of hybrid XNU. There was a whole story about the transition from "classic" Mac OS to Mach-based operation system called OS X (and currently called macOS). I've put the links below to the original CMU project and related Wikipedia pages for curious. However, currently, I'm mostly interested in the technical aspect located in the Mach-O structure.
 
 > **Notice:**
-> At the moment of writing this post I didn't find the Mach-O official reference at the Apple Developer. (The only document was there Mach-O Programming Topics which is helpfull, but can not replace specification completely). It's seems strange, because every file format has tons of details. So my current post is based on the information I found from unofficial sources. I hope that these documents still are relevant and the differences will not be too significant.
+> At the moment of writing this post, I didn't find the Mach-O official reference at the Apple Developer. (The only document was there Mach-O Programming Topics which is helpful, but cannot replace specification completely). It seems strange because every file format has tons of details. So my current post is based on the information I found from unofficial sources. I hope that these documents still are relevant and the differences will not be too significant.
 
-Specification isn't very exciting topic itselt, because such documents should provide very detailed information. Usually you will not read it as your favorite Lord of the Rings from start to the end. Most probably you will refer to the specification if you have some question. So I think it would be wise to use them in the similar way. I'll select one of the tool for binary file analysis and will try to clarify what output it produces. 
+Any specification isn't very exciting topic itself, because such documents should provide very detailed information. Usually, you will not read it as your favorite Lord of the Rings from start to the end. Most probably you will refer to the specification if you have some question. So I think it would be wise to use them in a similar way. I'll select one of the tools for binary file analysis and will try to clarify what output it produces. 
 
 There is a whole bunch of tools to work with binaries. I prefer to start with the most standard set (it's described in the "Mach-O Programming Topics" documentation):
 
@@ -30,11 +30,11 @@ There is a whole bunch of tools to work with binaries. I prefer to start with th
 
 **pagestuff**
 
-I've choosed probably the most simple tool for start, it's `pagestuff`, which has only few input parameters. The name of the tool isn't very obvious, so the short description will not be redundant. Because of the fact that I like man-pages for their clarity, let's check the description from `man pagestuff`:
+I've choosen probably the most simple tool for start, it's `pagestuff`, which has only few input parameters. The name of the tool isn't very obvious, so the short description will not be redundant. Because of the fact that I like man-pages for their clarity, let's check the description from `man pagestuff`:
 
-> `pagestuff`  displays  information  about  the specified logical pages of a file conforming to the Mach-O executable format.  For each specified page of code, symbols (function and static data structure names) are displayed.  If no pages are specified, symbols for all pages in the __TEXT, __text section are displayed.
+> `pagestuff` displays information about the specified logical pages of a file conforming to the Mach-O executable format.  For each specified page of code, symbols (function and static data structure names) are displayed.  If no pages are specified, symbols for all pages in the `__TEXT`, `__text` section are displayed.
 
-Ok. `man` states that Mach-O structure could be represented with a logical pages, which could be displayed by `pagestuff`. Well, let's try and see. It's obvious that for binary analysis we need a binary. Basically, for our goals it will enough a simple console application. So I've created a blank OS X console project in Xcode and executed it in order to produce an output.
+Ok. `man` states that Mach-O structure could be represented with logical pages, which could be displayed by `pagestuff`. Well, let's try and see. It's obvious that for binary analysis we need a binary. Basically, for our goals, it is enough to use simple console application. So I've created a blank OS X console project in Xcode and executed it in order to produce an output.
 
 Source code of the sample project:
 
@@ -64,7 +64,7 @@ int main(int argc, const char * argv[]) {
 
 ```
 
-- Link to the sample project: https://github.com/skyylex/sampler
+- [Link to the sample project](https://github.com/skyylex/sampler)
 - Executable file could be found at: `sampler/exploring_mach-o_binaries-tools_pagestuff/output/`
 
 If the repo is downloaded, we are ready to try (run in Terminal).
@@ -119,9 +119,9 @@ File Page 4 contains data of code signature
 
 **Analysis**
 
-We've got a list of "File page N ..." items with specific description for each item. I think it's good idea to check them one by one (in this post only pages 0 - 1 will be considered).
+We've got a list of "File page N ..." items with a description for each item. I think it's a good idea to check them one by one (in this post only pages 0 - 1 will be considered).
 
-- `Mach-O headers`. Mach-O headers appears always at the beginning at the executable, and provide general information about file. Headers should be specified as:
+- `Mach-O headers`. Mach-O headers appear always at the beginning of the executable and provide general information about a file. Headers should be specified as:
 
 ``` c
 struct mach_header {
@@ -138,7 +138,7 @@ struct mach_header {
 - `section (__TEXT,__text)` - contains executable machine code. In our case, `__text` will at least contain `main()` compiled source code and other generated by compiler procedures for `SampleClass`.
 - `section (__TEXT,__stubs)` - section contains stubs with prefix `imp___stubs__`. That stubs are used in the code of `__text` section to compile procedures with external dependencies, such as system NSLog. dyld (dynamic linker) will replace such stubs on runtime with actual place in dynamic library.
 
-- `section (__TEXT,__stub_helper)` - section is also used for the dynamic linker (dyld). It contains compiled code to jump to dyld_stub_binder implementation.
+- `section (__TEXT,__stub_helper)` - section is also used for the dynamic linker (dyld). It contains compiled code to jump to `dyld_stub_binder`implementation.
 - `section (__TEXT,__objc_classname)` - contains declared in the code Objective-C class names, as string literals (for example "SampleClass")
 - `section (__TEXT,__objc_methname)` - contains string literals for all generated or written Objective-C methods ("init")
 - `(__TEXT,__objc_methtype)` - contains string literals for all method types (generated property method with type "NSString")
@@ -180,7 +180,7 @@ It's seems that it. `__TEXT` and `__DATA` sections describe most of the executab
 
 **Summary**
 
-`pagestuff` provides simple approach to get the overview of the specific Mach-O file structure. We used `pagestuff filepath -a` options to get verbose form. More strict version `pagestuff filepath -p` provides it in the form of concrete offsets and lengths without description (internal section name is used instead). However, if the goal is to get detailed picture for each section/segment developer should consider using `otool` - object file displaying tool (which I will try to describe in the next post).
+`pagestuff` provides a simple approach to get the overview of the specific Mach-O file structure. We used `pagestuff file path -a` options to get a verbose form. More strict version `page stuff file path -p` provides it in the form of concrete offsets and lengths without description (internal section name is used instead). However, if the goal is to get a detailed picture for each section/segment developer should consider using `otool` - object file displaying tool (which I will try to describe in the next post).
 
 **Original project of the Carnegie Mellon University**
 
