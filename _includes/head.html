@@ -14,7 +14,29 @@
   <link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}" href="{{ "/feed.xml" | relative_url }}">
   
   {% if jekyll.environment == 'production' and site.google_analytics %}
-	{% include google-analytics.html %}
+	<script type='text/javascript'>
+		//some default pre init
+		var Countly = Countly || {};
+		Countly.q = Countly.q || [];
+
+		//provide countly initialization parameters
+		Countly.app_key = '9ba08d58840a3de14d487b16100f7f6ce2ed9ea0';
+		Countly.url = 'http://51.15.245.62';
+
+		Countly.q.push(['track_sessions']);
+		Countly.q.push(['track_pageview']);
+		Countly.q.push(['track_links']);
+
+		//load countly script asynchronously
+		(function() {
+		   var cly = document.createElement('script'); cly.type = 'text/javascript';
+		   cly.async = true;
+		   //enter url of script here
+		   cly.src = 'https://cdn.jsdelivr.net/countly-sdk-web/latest/countly.min.js';
+		   cly.onload = function(){Countly.init()};
+		   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(cly, s);
+		})();
+	</script>
   {% endif %}
   {% if site.tags != "" %}
      {% include collecttags.html %}
