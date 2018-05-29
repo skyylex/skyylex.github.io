@@ -1,1 +1,1 @@
-**https://yurylapitsky.com** -  my homepage and blog dedicated to software engineering
+**https://yurylapitsky.com** -  Homepage and articles about software engineering
