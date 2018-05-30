@@ -5,7 +5,11 @@ description: More about binaries and disassembly in OS X. And pretty simple, but
 tags: mach-o disassembly disassembly-tools pagestuff binaries command-line
 ---
 
-**Exploring Mach-O binaries. Tools - pagestuff**
+**Exploring Mach-O binaries. Tools - pagestuff**  
+
+--- Continued in [Exploring Mach-O binaries. Tools - nm]({{ site.baseurl }}{% post_url 2018-05-05-exploring_mac-o_binaries_nm %})
+<br/>
+<br/>
 
 **Introduction**
 

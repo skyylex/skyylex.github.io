@@ -7,6 +7,10 @@ tags: mach-o disassembly disassembly-tools nm binaries command-line
 
 **Mach-O exploration. Tools - nm**
 
+--- Started in [Exploring Mach-O binaries. Tools - pagestuff]({{ site.baseurl }}{% post_url 2017-02-12-exploring_mach-o_binaries %})
+<br/>
+<br/>
+
 **Introduction**
 
 Today's plan is to take a look at another command-line tool which is helpful for binary analysis. I've already used it in a couple of posts to find specific method declared in binary. This tool is `nm`. Short description from man as usually:
