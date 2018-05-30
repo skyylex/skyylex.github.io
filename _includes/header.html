@@ -27,9 +27,25 @@
   padding: 0px;
 }
 
+.cookies_header {
+  text-align: center;
+  background-color: dimgrey;
+  color: whitesmoke;
+  font-family: Courier New;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
 </style>
 
+
+
 <header class="common_header site-header" role="banner">
+  <div class="cookies_header">
+    <span>This site uses </span>
+    <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies" style="color: lightblue;">cookies</a>
+    <span> to make the content better</span>
+  </div>
   <div class="wrapper">
     <div class="header_title">{{ site.title | escape }}</div>
     <div>&nbsp</div>
