@@ -1,3 +1,4 @@
 - modulemap in Xcode
 - console application and parsing arguments
 - NSCAssert vs NSAssert
+- How does OCMock work?
