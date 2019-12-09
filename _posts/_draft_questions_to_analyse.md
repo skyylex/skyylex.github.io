@@ -2,3 +2,4 @@
 - console application and parsing arguments
 - NSCAssert vs NSAssert
 - How does OCMock work?
+- dependency injection vs objects ownership
