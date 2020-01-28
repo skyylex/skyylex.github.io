@@ -13,20 +13,20 @@ tags: objective-c c-preprocessor macros
 
 **C Preprocessor**
 
-C preprocessor is a crucial part of any compilation target (assuming that target is C or C-based language) larger than one file. It's used most commonly via `#include` / `#import` constructions, to reuse already implemented function or class from a different file. Sometimes, there is a code that should be isolated and we want to limit its scope to a specific target, conditional inclusion is helpful here via `#if`, `#ifdef` and so on. Comments are the other point that helps to make code clearer, but comments aren't needed in the binary and the preprocessor silently removes them for us. We also can use `#define` for the preprocessor to define a constant. But it's more rarely used that way nowadays. In Objective-C such style became obsolete and was replaced with a specifying `static` variables. However, preprocessor could also do very powerful things from completely different perspective using macros. And recently I've found some interesting ideas in the libextc framework, and I'd like to share them with you.
+C preprocessor is a crucial part of any compilation target (assuming that target is C or C-based language) larger than one file. It's used most commonly via `#include` / `#import` constructions, to reuse already implemented function or class from a different file. Sometimes, there is a code that should be isolated and we want to limit its scope to a specific target, conditional inclusion is helpful here via `#if`, `#ifdef` and so on. Comments are the other point that helps to make the code clearer, but comments aren't needed in the binary and the preprocessor silently removes them for us. We also can use `#define` for the preprocessor to define a constant. But it's more rarely used that way nowadays. In Objective-C such style became obsolete and was replaced with specifying `static` variables. However, preprocessor could also do very powerful things from completely different perspective using macros. And recently I've found some interesting ideas in the __libextc__ framework, and I'd like to share them with you.
 
 
 **MACROS**
 
 *NOTE:* This article doesn't try to compete with the documentation about C Preproccessor, so if you're not familiar with the subject it worths to check something like [GCC manual](https://gcc.gnu.org/onlinedocs/cpp/index.html)
 
-A macro is a rule that defines how specific pattern is replaced with a specified construction. There are several types of macros function-like macros, with or without parameters. Nevertheless, they all have in common the following structure:
+A macro is a rule that defines how a specific pattern is replaced with a specified construction. There are several types of macros function-like macros, with or without parameters. Nevertheless, they all have in common the following structure:
 
 ```
 #define expression_to_replace replacement
 ```
 
-`#define` define is the key word (generally all starting with `#` expressions are preprocessor-related) that starts the macro definition, as I already mentioned, you can define the constant that way or you can try to build more advanced expressions hidden under the short expression 
+`#define` is a keyword (generally all starting with `#` expressions are preprocessor-related) that starts the macro definition, as I already mentioned, you can define the constant that way or you can try to build more advanced expressions hidden under the short-expression 
 
 As they say, better once to see, than hundred times to hear. So for example, the macro:
 
@@ -34,7 +34,7 @@ As they say, better once to see, than hundred times to hear. So for example, the
 #define AppDelegate [[UIApplication sharedApplication] delegate] 
 ```
 
-was very popular some time ago in iOS project on Objective-C and actually [it's not very good style](https://www.cocoawithlove.com/2008/11/singletons-appdelegates-and-top-level.html). What this snippet does is whenever the preprocessor finds `AppDelegate` used in the code, `AppDelegate` would be replaced with the right part `[[UIApplication sharedApplication] delegate]`. 
+was very popular some time ago in iOS projects on Objective-C and actually [is not a very good style](https://www.cocoawithlove.com/2008/11/singletons-appdelegates-and-top-level.html). What this snippet does is whenever the preprocessor finds `AppDelegate` used in the code, `AppDelegate` would be replaced with the right part `[[UIApplication sharedApplication] delegate]`. 
 
 `[AppDelegate window]` => `[[[UIApplication sharedApplication] delegate] window]`
 
@@ -64,7 +64,7 @@ And preprocessor will produce the following:
 (({}), 1);
 ```
 
-And it's completely valid expression (compiler may produce warning to insert `(void)` cast before `{}`, but other than that there is no error), so for example: `printf("%d", ((({})), 1));` will have the following output: 1.
+And it's completely valid expression (compiler may produce a warning to insert `(void)` cast before `{}`, but other than that there is no error), so for example: `printf("%d", ((({})), 1));` will have the following output: 1.
 
 From the [C99 draft](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf):
 
@@ -78,7 +78,7 @@ From the [C99 draft](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf):
 
 C preprocessor treats `#` as a special symbol. The value right to it will be stringinized. Example:
 
-**Note:** I've retrieved an example from the concrete protocol implementation provided by `libextobjc`. To those who are new to Objective-C, protocol is a name Apple uses to name interfaces. Objective-C supports only abstract protocols out-of-the-box, which are interfaces that only declare some methods, but do not provide their implementation. Concrete protocol is an interface that provides not only methods declaration, but also implementation. Swift supports conrete protocols from the 2nd version. This technique is one of the ways to get a multiple inheritance behaviour. However, as we all know all such hierarchies have some limitations [link]({{ site.baseurl }}{% link _posts/2016-11-15-Swift_and_Multiple_inheritance.md %}).
+**Note:** I've retrieved an example from the concrete protocol implementation provided by `libextobjc`. To those who are new to Objective-C, a *protocol* is a name Apple uses to name interfaces. Objective-C supports only abstract protocols out-of-the-box, which are interfaces that only declare some methods, but do not provide their implementation. A *concrete protocol* is an interface that provides not only methods declaration but also implementation. Swift supports concrete protocols from the 2nd version. This technique is one of the ways to get multiple inheritance behavior. However, as we all know all such hierarchies have some limitations [link]({{ site.baseurl }}{% link _posts/2016-11-15-Swift_and_Multiple_inheritance.md %}).
  
 Back to the [macro](https://github.com/jspahrsummers/libextobjc/blob/master/extobjc/EXTConcreteProtocol.h):
 
@@ -109,7 +109,7 @@ Back to the [macro](https://github.com/jspahrsummers/libextobjc/blob/master/exto
 	@end
 ```
 
-Basically, here we have a macro that produces class (in Objective-C inteface is a class) body for the provided protocol name. The line `objc_getProtocol(metamacro_stringify(NAME)` is our target. As you can see `NAME` is provided as a parameter and used in the declaration of the interface and as a part of the same class name `@implementation`. And it is also passed to the `objc_getProtocol()` as a parameter, this function expects `const char *name`, so stringinizing will wrap the expanded `NAME` value in a double quotes. If don't do that, the `NAME` value will placed as it is and compiler will use it as an expression (variable or will try to calculate required value).
+Here we have a macro that produces class (in Objective-C interface it is a class) body for the provided protocol name. The line `objc_getProtocol(metamacro_stringify(NAME)` is our target. As you can see `NAME` is provided as a parameter and used in the declaration of the interface and as a part of the same class name `@implementation`. And it is also passed to the `objc_getProtocol()` as a parameter, this function expects `const char *name`, so stringinizing will wrap the expanded `NAME` value in double-quotes. If we don't do that, the `NAME` value will be placed as it is and the compiler will use it as an expression (variable or will try to calculate required value).
 
 
 - https://developer.apple.com/documentation/objectivec/1418870-objc_getprotocol?language=objc
@@ -121,7 +121,7 @@ Basically, here we have a macro that produces class (in Objective-C inteface is 
 #define metamacro_concat_(A, B) A ## B
 ```
 
-You already know it, right? In the example below there were 2 usages of the `##`. This symbol concatenates left provided argument with right one. So if for previous concrete protocol macro we would use *SuperProtocol* as a `NAME`, the part of the produced code for `@interface NAME ## _ProtocolMethodContainer : NSObject < NAME >` will be presented after preprocessing as: 
+You already know it, right? In the example above there were 2 usages of the `##`. This symbol concatenates left provided argument with the right one. So if for previous concrete protocol macro we would use *SuperProtocol* as a `NAME`, the part of the produced code for `@interface NAME ## _ProtocolMethodContainer : NSObject < NAME >` will be presented after preprocessing as: 
 
 ```
 @interface SuperProtocol_ProtocolMethodContainer : NSObject < SuperProtocol >
@@ -139,7 +139,7 @@ Here is	the macro:
         metamacro_concat(metamacro_at, N)(__VA_ARGS__)
 ```
 
-The description says that N should be numerical from 0 to 20, and the rest of arguments will be used as a source of subscripting. For example: `metamacro_at(2, a, b, c)`,  will produce => c. How does it work? Here we see another interesting thing - macro could be reused inside another macro. And this is great way to build something advanced. Back to the example, as we know `metamacro_concat` connects 2 provided arguments, and as a result macro will be => 
+The description says that N should be numerical from 0 to 20, and the rest of the arguments will be used as a source of value. For example: `metamacro_at(2, a, b, c)`,  will produce => c. How does it work? Here we see another interesting thing - a macro could be reused inside another macro. And this is a great way to build something advanced. Back to the example, as we know `metamacro_concat` connects 2 provided arguments, and as a result, the macro will be => 
 
 ```
 metamacro_atN(__VA_ARGS__)
@@ -170,7 +170,7 @@ Consequently:
 #define metamacro_head_(FIRST, ...) FIRST
 ```
 
-So, basically the whole logic is based on the macro that receives the first argument and pre-generated sequence of arguments. Pre-generated sequence shift the element initially to the right(each pre-generated element cuts related element from `__VAR_ARGS__`), so the N-1 items will be cut and the Nth will be the first from left to right.
+So the whole logic is based on the macro that receives the first argument and pre-generated sequence of arguments. The pre-generated sequence shifts the element initially to the right (each pre-generated element cuts related element from `__VAR_ARGS__`), so the N-1 items will be cut and the Nth will be the first from left to right.
 
 Example?
 
