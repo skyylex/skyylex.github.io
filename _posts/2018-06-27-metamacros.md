@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Macros in C / Objective-C 
-description: Macro is a quite different programming technique. Why do we need to use it nowadays? And what types of tasks could be solved using macros? And a few real-world examples. 
+description: Macro is a quite different programming technique. Why do we need to use it nowadays? And what types of tasks could be solved using macros? And several real-world examples. 
 tags: objective-c c-preprocessor macros 
 ---
 
