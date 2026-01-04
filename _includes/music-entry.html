@@ -1,0 +1,22 @@
+<article class="music-album">
+    <section>
+        {% if include.currPost.external_url %}
+        <a href="{{ include.currPost.external_url | relative_url }}" target="_blank">
+            {% else %}
+            <a href="{{ include.currPost.url | relative_url }}">
+                {% endif %}
+                <h2 class="music-album_title">
+                    {{ include.currPost.title }}
+                </h2>
+            </a>
+            <p class="music-album_summary">
+                {% if include.currPost.description %}
+                {{ include.currPost.description }}
+                {% else %}
+                {{ include.currPost.excerpt | strip_html }}
+                {% endif %}
+            </p>
+            {% include music-entry-metadata.html currPost=include.currPost %}
+        </section>
+    {% include read-more.html currPost=include.currPost %}
+</article>

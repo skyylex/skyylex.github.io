@@ -1,0 +1,29 @@
+title: Yury Lapitsky
+url: "https://yurylapitsky.com" # the base hostname & protocol for your site, e.g. http://example.com
+author: itspatrq
+plugins:
+  - jekyll-seo-tag
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-paginate-v2
+# Build settings
+markdown: kramdown
+remote_theme: ItsPatrq/minimal-music-project
+permalink: /:title.html
+pagination:
+  enabled: true
+  per_page: 4
+  limit: 0
+  sort_field: 'date'
+  sort_reverse: true
+
+  exclude:
+  - CHANGELOG.md
+  - CNAME
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE
+  - README.md
+  - screenshot.png
+  - docs/
+  - node_modules

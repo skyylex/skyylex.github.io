@@ -1,0 +1,35 @@
+---
+layout: default
+---
+<div class="content-container">
+    <div class="music">
+        <h1 class="music-header">Music</h1>
+        {{ content }}
+        
+        {% assign types = "" | split: "" %}
+        {% for post in paginator.posts %}
+            {% if post.categories contains page.category %}
+                {% if post.type %}
+                    {% unless types contains post.type %}
+                        {% assign types = types | push: post.type %}
+                    {% endunless %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        
+        {% for type in types %}
+        <div class="music-section">
+            <h2 class="music-section-title">{{ type | capitalize }}s</h2>
+            <div class="music-grid">
+                {% for post in paginator.posts %}
+                {% if post.categories contains page.category and post.type == type %}
+                {% include music-grid-entry.html currPost=post %}
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        {% include pagination-buttons.html %}
+    </div>
+</div>

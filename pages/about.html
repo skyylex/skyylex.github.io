@@ -1,0 +1,48 @@
+---
+layout: default
+title: About
+permalink: about.html
+category: about
+---
+<div class="content-container about">
+    <h1>About</h1>
+    
+    <img src="{{ '/assets/img/avatars.jpg' | relative_url }}" alt="Artist Avatar" class="about_avatar">
+
+    Hi! I'm an independent artist sharing my passion to music through the instrumental tracks I create. I'm inspired by various genres and styles, and I love experimenting with different sounds to craft the desired vibe. My main instruments are electric guitar and synthesizers, but I also enjoy incorporating other instruments and electronic elements into my music.
+
+    I'm open to collaborations and suggestions, so feel free to reach out!
+
+    <hr />
+    <p>
+        Contacts:
+    <ul>
+        <li>
+            E-mail: <a href="#" id="email-link" class="email-contact"></a>
+        </li>
+        <li>
+            Instagram: <a href="{{ site.data.metaData.instagram_url }}" target="_blank" rel="noopener noreferrer">@skyylex</a>
+        </li>
+    </ul>
+    </p>
+    <hr />
+</div>
+
+<script>
+    (function() {
+        const decode = (s) => atob(s);
+        const parts = [
+            'eXVyeS5sYXBpdHNreS5tdXNpYw==',  // user
+            'cHJvdG9u',                        // domain
+            'bWU='                             // tld
+        ];
+        const email = decode(parts[0]) + '@' + decode(parts[1]) + '.' + decode(parts[2]);
+        const linkEl = document.getElementById('email-link');
+        if (linkEl) {
+            linkEl.href = 'mailto:' + email;
+            linkEl.textContent = email;
+        }
+    })();
+</script>
+
+<!-- Link styles moved to _sass/styles/_defaults.scss (.content-container a) -->

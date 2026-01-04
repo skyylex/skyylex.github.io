@@ -1,0 +1,14 @@
+menu_pages:
+- title: News
+  url: /
+  category: home
+
+- title: Music
+  url: /music/
+  category: Music
+  tooltip: music releases
+
+- title: About
+  url: about.html
+  category: about
+  tooltip: This is about

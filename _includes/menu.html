@@ -1,0 +1,49 @@
+<nav class="menu" role="navigation" aria-label="Main menu">
+    <div class="menu-contact">
+        {% if site.data.metaData.spotify_url %}
+        <a href="{{ site.data.metaData.spotify_url }}" target="_blank" rel="noopener noreferrer" aria-label="Spotify" class="streaming-link">
+            <img src="{{ '/assets/img/spotify-white.svg' | relative_url }}" alt="Spotify">
+        </a>
+        {% endif %}
+        {% if site.data.metaData.itunes_url %}
+        <a href="{{ site.data.metaData.itunes_url }}" target="_blank" rel="noopener noreferrer" aria-label="iTunes" class="streaming-link">
+            <img src="{{ '/assets/img/itunes-white.svg' | relative_url }}" alt="iTunes">
+        </a>
+        {% endif %}
+        {% if site.data.metaData.bandcamp_url %}
+        <a href="{{ site.data.metaData.bandcamp_url }}" target="_blank" rel="noopener noreferrer" aria-label="Bandcamp" class="streaming-link">
+            <img src="{{ '/assets/img/bandcamp-white.png' | relative_url }}" alt="Bandcamp">
+        </a>
+        {% endif %}
+        {% if site.data.metaData.instagram_url %}
+        <a href="{{ site.data.metaData.instagram_url }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="streaming-link">
+            <img src="{{ '/assets/img/instagram-white.png' | relative_url }}" alt="Instagram">
+        </a>
+        {% endif %}
+        {% for contact in site.data.menu.menu_contacts %}
+        <a href="{{ contact.url | relative_url }}" target="{{ contact.target }}">
+            <i class="{{ contact.faicon }}"></i>
+        </a>
+        {% endfor %}
+    </div>
+    <div class="menu-top">
+        <ul class="navigation">
+            {% for menu_item in site.data.menu.menu_pages %}
+            <li>
+                <a href="{{ menu_item.url | relative_url }}" category="{{ menu_item.category }}" title="{{ menu_item.tooltip }}"
+                {% if menu_item.category == page.category or page.categories contains menu_item.category %}
+                    class="selected"
+                {% endif %}
+                >
+                    <span>{{ menu_item.title }}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="menu-top_expand" onclick="toggleExpander(this)">
+            <div class="bar_top"></div>
+            <div class="bar_middle"></div>
+            <div class="bar_bottom"></div>
+        </div>
+    </div>
+</nav>

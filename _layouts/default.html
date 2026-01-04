@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="{{ site.data.metaData.lang }}">
+  <head>
+    {% include common-head.html %}
+  </head>
+  <body>
+    {% include header.html %}
+    {% include menu.html %}
+      <main class="content-layout">
+          {{ content }}
+          {% include footer.html %}
+      </main>
+    <script>
+      {% include common.js %}
+    </script>
+    {% include customizationsScripts.html %}
+  </body>
+</html>

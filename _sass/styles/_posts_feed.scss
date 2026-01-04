@@ -1,0 +1,140 @@
+$image-dim: 192px;
+
+.post-feed {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    color: var(--text, #{$p_text});
+
+    h1 {
+        flex: 0;
+        margin: auto;
+        display: flex;
+        align-items: center;
+    }
+    hr {
+        margin-bottom: 0.25em;
+        @include mobile {
+            &:first-of-type {
+                margin-top: 0;
+            }
+        }
+    }
+    article {
+        width: 100%;
+        position: relative;
+    }
+    h1 {
+        flex: 0;
+        margin: auto;
+        display: flex;
+        align-items: center;
+    }
+    h2 {
+        margin-bottom: 0.5em;
+        text-align: center;
+        @include mobile {
+            text-align: center;
+        }
+    }
+    a {
+        line-height: 1.1em;
+        text-decoration: underline;
+        text-decoration-color: transparent;
+        transition: 0.4s;
+        -webkit-text-decoration-color: transparent;
+        -moz-text-decoration-color: transparent;
+        &:hover {
+            text-decoration-color: $black;
+            -webkit-text-decoration-color: $black;
+            -moz-text-decoration-color: $black;
+        }
+    }
+    .article-date {
+        font-size: 0.95em;
+        margin-top: 0;
+        margin-bottom: 0.5em;
+        opacity: 0.5;
+        text-align: right;
+    }
+
+    figure {
+        width: max-content;
+        margin: 0;
+        margin-bottom: 1em;
+        max-width: 300px;
+    }
+
+    &_columns {
+        display: flex;
+        gap: 2em;
+        align-items: flex-start;
+
+        @include mobile {
+            flex-direction: column;
+        }
+    }
+
+    &_content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &_image-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    &_image {
+        max-width: 300px;
+        max-height: 300px;
+        border: 0;
+        margin: 0;
+    }
+
+    .click-to-enlarge {
+        max-width: 300px;
+        max-height: 300px;
+        margin: 0;
+    }
+
+
+    .music-album {
+        &_title {
+            display: none;
+        }
+        &_summary {
+            margin-top: 3vw;;
+        }
+    }
+
+    .music-streaming-icons {
+        display: flex;
+        gap: 12px;
+        margin: 0.8em 0;
+        flex-wrap: wrap;
+
+        a {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+
+            &:hover {
+                transform: scale(1.15);
+                text-decoration: none;
+            }
+
+            img {
+                width: 28px;
+                height: 28px;
+                display: block;
+                vertical-align: middle;
+            }
+        }
+    }
+}

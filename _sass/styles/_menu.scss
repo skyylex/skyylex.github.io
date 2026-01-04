@@ -1,0 +1,262 @@
+.menu {
+    $root: &;
+    background-color: var(--menu-bg, var(--surface, #{$white}));
+    color: var(--menu-text, #111111);
+    border-top: 1px solid var(--panel-border);
+    box-shadow: var(--panel-shadow);
+    position: fixed;
+    left: 0;
+    top: $header-height;
+    width: 100%;
+    height: $menu-height;
+    display: flex; 
+
+    @include mobile {
+        box-shadow: none;
+        border-top: 1px solid rgba(0,0,0,0.03);
+    }
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0 calc(5% + 18px);
+    z-index: 200;
+
+    @include mobile {
+        flex-direction: row;
+        width: 100%;
+        top: $mobile-header-height;
+        height: $mobile-menu-height;
+        padding: 0 0.6rem;
+    }
+    &.expanded--visible {
+        @include mobile {
+            .navigation {
+                opacity: 1;
+            }
+            .menu-contact {
+                opacity: 1;
+            }
+        }
+    }
+    &.expanded {
+        z-index: 210;
+        .menu-top_expand  {
+            .bar_top {
+                -webkit-transform: rotate(-45deg) translate(-8px, 8px);
+                transform: rotate(-45deg) translate(-8px, 8px);
+                }
+                
+                .bar_middle {opacity: 0;}
+                
+                .bar_bottom {
+                -webkit-transform: rotate(45deg) translate(-8px, -8px);
+                transform: rotate(45deg) translate(-8px, -8px);
+            }
+        }
+        @include mobile {
+            .navigation {
+                display: flex;
+            }
+        }
+
+      }
+    &-top {
+        box-sizing: border-box;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        position: relative; /* allow centered absolute nav */
+        &_logo {
+            max-width: 140px;
+            margin-right: 1rem;
+            a {
+                color: var(--text, #000000);
+                img {
+                    max-height: calc(#{$menu-height} - 20px);
+                    @include mobile {
+                        max-height: calc(#{$mobile-menu-height} - 10px);
+                    }
+                    width: auto;
+                    max-width: 100%;
+                    border: 0;
+                    object-fit: contain;
+                }
+            }
+        }
+        &_expand {
+            display: none;
+            @include mobile {
+                display: inline-block;
+            }
+            cursor: pointer;
+            flex-grow: 0;
+            position: absolute;
+            right: 10px;
+            top: 15px;
+            .bar_top, .bar_middle, .bar_bottom {
+                width: 35px;
+                height: 5px;
+                background-color: var(--menu-text, #111111);
+                margin: 6px 0;
+                transition: 0.4s;
+              }
+          }
+
+          
+    }
+    ul, ol, dl {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        li, dt {
+            display: block;
+            margin: 0;
+        }
+    }
+
+    /* Navigation links styling (desktop & mobile) */
+    .navigation {
+        transition: opacity 0.3s ease-in-out;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: absolute; /* pin to center to avoid re-centering */
+        left: 50%;
+        transform: translateX(-50%);
+        flex: 0 0 auto; /* do not grow/shrink to avoid shifting layout */
+        white-space: nowrap;
+        z-index: 210;
+        will-change: transform, opacity;
+        margin-left: calc((140px + 2em) / -2); /* offset half of menu-contact width to true center */
+        
+        @include mobile {
+            display: none;
+            opacity: 0;
+            position: fixed;
+            left: 0;
+            top: $mobile-menu-height;
+            height: calc(100% - #{$mobile-menu-height});
+            width: 100%;
+            background-color: var(--menu-bg, var(--surface, #{$white}));
+            margin-left: 0;
+            padding-left: 2em;
+            transform: none;
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 0;
+            white-space: normal;
+        }
+    }
+
+    .navigation li a {
+        align-items: center;
+        color: inherit;
+        cursor: pointer;
+        display: inline-flex;
+        justify-content: center;
+        font-weight: 400;
+        letter-spacing: 3px;
+        font-size: 1em;
+        padding: 0.5rem 0.6rem;
+        min-width: 6rem; /* lock item widths to prevent reflow */
+        text-align: center;
+        position: relative;
+        transition: color 0.2s ease;
+        -webkit-font-smoothing: antialiased;
+        &:hover {
+            color: var(--menu-link-hover, #5b5b5b);
+            text-decoration: none;
+        }
+        &:focus {
+            outline: none;
+        }
+        &:active {
+            transform: none;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: 10%;
+            right: 10%;
+            bottom: 6px;
+            height: 3px;
+            background-color: var(--menu-link-hover, rgba(255,255,255,0.12));
+            border-radius: 2px;
+            transform-origin: center;
+            transform: scaleX(0);
+            opacity: 0;
+            transition: transform 0.18s ease, opacity 0.18s ease;
+            will-change: transform, opacity;
+        }
+
+        &.selected {
+            font-weight: 400; /* keep weight stable to avoid layout shifts */
+            &::after {
+                transform: scaleX(0);
+                opacity: 0;
+            }
+        }
+    }
+
+
+
+    &-contact {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        flex-shrink: 0;
+        order: -1;
+        margin-right: 2em;
+        min-width: 140px;
+        transition: opacity 0.3s ease-in-out;
+        
+        @include mobile {
+            gap: 6px;
+            margin-right: 1em;
+            min-width: 120px;
+        }
+        
+        a {
+            color: inherit;
+            cursor: pointer;
+            text-align: left;
+            text-size-adjust: 100%;
+            user-select: none;
+            transition: transform 0.2s ease;
+            &:hover {
+                transform: scale(1.1);
+            }
+            
+            &.streaming-link {
+                display: inline-block;
+                margin: 0;
+                width: 24px;
+                height: 24px;
+                
+                @include mobile {
+                    width: 20px;
+                    height: 20px;
+                }
+                
+                img {
+                    width: 24px;
+                    height: 24px;
+                    display: block;
+                    vertical-align: middle;
+                    
+                    @include mobile {
+                        width: 20px;
+                        height: 20px;
+                    }
+                }
+            }
+        }
+    }
+
+    
+}

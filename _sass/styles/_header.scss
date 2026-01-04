@@ -1,0 +1,56 @@
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: $header-height;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+    background-color: var(--header-bg);
+    color: var(--header-text);
+    padding: 0 1rem;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--panel-border);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.02); 
+
+    .site-header_inner {
+        max-width: 1200px;
+        width: 100%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+    }
+
+    .artist-title {
+        font-family: 'Cinzel Decorative', 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 2.8rem;
+        color: var(--header-text, #fff);
+        text-decoration: none;
+        letter-spacing: 1px;
+        -webkit-font-smoothing: antialiased;
+        text-transform: none;
+        text-shadow: 0 1px 0 rgba(0,0,0,0.06);
+        line-height: 1;
+        transition: transform 0.2s ease, color 0.2s ease;
+        padding: 0.15rem 0.5rem;
+        border-left: 1px solid rgba(255,255,255,0.06);
+    }
+
+    @include mobile {
+        height: $mobile-header-height;
+        .artist-title {
+            font-size: 1.4rem;
+            letter-spacing: 0.6px;
+        }
+    }
+
+    .artist-title:hover {
+        transform: translateY(-1px) scale(1.02);
+        color: var(--muted, #666);
+    }
+}

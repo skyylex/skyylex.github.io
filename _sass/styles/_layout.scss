@@ -1,0 +1,57 @@
+main {
+    background-color: var(--bg, #{$white});
+    color: var(--text, #{$p_text});
+    float: none;
+    width: 100%;
+    min-height: 300px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - (#{$menu-height} + #{$header-height}));
+    overflow-y: auto;
+    position: fixed;
+    left: 0;
+    top: calc(#{$menu-height} + #{$header-height});
+    @include mobile {
+        top: calc(#{$mobile-menu-height} + #{$mobile-header-height});
+        left: 0;
+        width: 100%;
+        height: calc(100% - (#{$mobile-menu-height} + #{$mobile-header-height}));
+    }
+    &.no-menu {
+        width: 100%;
+        left: 0;
+        top: 0;
+    }
+
+    color: var(--text, #{$p_text});
+} 
+footer {
+    width: 100%;
+    text-align: center;
+    color: var(--text, #{$p_text});
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85em;
+    margin-top: 3em;
+    margin-bottom: 2em;
+    
+    p {
+        margin: 0;
+    }
+}
+
+.is-minimal-menu {
+    main {
+        width: 100%;
+        left: 0;
+        @include mobile {
+            top: calc(#{$minimal-menu-size} + #{$mobile-header-height});
+            left: 0;
+            width: 100%;
+            height: calc(100% - (#{$minimal-menu-size} + #{$mobile-header-height}));
+        }
+    }
+}

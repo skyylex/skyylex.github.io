@@ -1,0 +1,50 @@
+{% assign playArray = include.currPost.play | size %}
+<div class="music-streaming-icons">
+    <!-- Spotify -->
+    {% if include.currPost.spotify_url %}
+        <a href="{{ include.currPost.spotify_url }}" target="_blank" rel="noopener noreferrer" aria-label="Spotify" title="Spotify">
+            <img src="{{ '/assets/img/spotify-white.svg' | relative_url }}" alt="Spotify">
+        </a>
+    {% endif %}
+
+    <!-- iTunes Store -->
+    {% if include.currPost.itunes_url %}
+        <a href="{{ include.currPost.itunes_url }}" target="_blank" rel="noopener noreferrer" aria-label="iTunes" title="iTunes">
+            <img src="{{ '/assets/img/itunes-white.svg' | relative_url }}" alt="iTunes">
+        </a>
+    {% endif %}
+
+    <!-- Other streaming services from play array -->
+    {% if playArray != 0 %}
+        {% for play in include.currPost.play %}
+            {% assign serviceName = play.name | downcase %}
+            {% if serviceName contains "spotify" %}
+                <a href="{{ play.url }}" target="_blank" rel="noopener noreferrer" aria-label="Spotify" title="Spotify">
+                    <img src="{{ '/assets/img/spotify-white.svg' | relative_url }}" alt="Spotify">
+                </a>
+            {% elsif serviceName contains "itunes" or serviceName contains "apple music" %}
+                <a href="{{ play.url }}" target="_blank" rel="noopener noreferrer" aria-label="iTunes" title="iTunes">
+                    <img src="{{ '/assets/img/itunes-white.svg' | relative_url }}" alt="iTunes">
+                </a>
+            {% elsif serviceName contains "bandcamp" %}
+                <a href="{{ play.url }}" target="_blank" rel="noopener noreferrer" aria-label="Bandcamp" title="Bandcamp">
+                    <img src="{{ '/assets/img/bandcamp-white.png' | relative_url }}" alt="Bandcamp">
+                </a>
+            {% elsif serviceName contains "youtube" %}
+                <a href="{{ play.url }}" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
+                    <img src="{{ '/assets/img/youtube-white.png' | relative_url }}" alt="YouTube">
+                </a>
+            {% elsif serviceName contains "soundcloud" %}
+                <a href="{{ play.url }}" target="_blank" rel="noopener noreferrer" aria-label="SoundCloud" title="SoundCloud">
+                    <img src="{{ '/assets/img/soundcloud-white.png' | relative_url }}" alt="SoundCloud">
+                </a>
+            {% elsif serviceName contains "instagram" %}
+                <a href="{{ play.url }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+                    <img src="{{ '/assets/img/instagram-white.png' | relative_url }}" alt="Instagram">
+                </a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</div>
+
+
