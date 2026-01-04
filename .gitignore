@@ -1,4 +1,3 @@
-_site/*
 vendor/bundle/*
 .bundle/*
 .sass-cache/*
