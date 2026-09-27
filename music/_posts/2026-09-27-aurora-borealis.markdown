@@ -2,7 +2,7 @@
 layout: post
 title: Aurora Borealis
 description: An instrumental single inspired by Northern Lights also known as Aurora Borealis.
-image: assets/img/eastern-wind-cover.jpg
+image: assets/img/aurora-borealis-cover.png
 type: single
 spotify_url: https://open.spotify.com/track/2j2gkCPBnOzEpg687RS7W7
 itunes_url: https://music.apple.com/us/song/aurora-borealis/6813874111
